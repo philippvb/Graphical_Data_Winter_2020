@@ -1,0 +1,111 @@
+\newcommand{\NUMBER}{1}
+\newcommand{\EXERCISES}{3}
+\newcommand{\DEADLINE}{16.11.20}
+\newcommand{\COURSE}{Graphical Data}
+\newcommand{\STUDENTA}{Philipp von Bachmann}
+\newcommand{\STUDENTB}{David Ott}
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, enumerate, amssymb, multirow, fancyhdr, color, graphicx, lastpage, listings, tikz, pdflscape, subfigure, float, polynom, hyperref, tabularx, forloop, geometry, listings, fancybox, tikz, forest, tabstackengine, cancel, hyperref}
+\input kvmacros
+\geometry{a4paper,left=3cm, right=3cm, top=3cm, bottom=3cm}
+\pagestyle {fancy}
+\fancyhead[C]{\COURSE}
+\fancyhead[R]{\today}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{Page \thepage /\pageref*{LastPage}}
+\def\header#1#2{
+  \begin{center}
+    {\Large Assignment #1}\\
+    %{(Due by: #2)}
+  \end{center}
+}
+
+\newcounter{punktelistectr}
+\newcounter{punkte}
+\newcommand{\punkteliste}[2]{%
+  \setcounter{punkte}{#2}%
+  \addtocounter{punkte}{-#1}%
+  \stepcounter{punkte}%<-- also punkte = m-n+1 = Anzahl Spalten[1]
+  \begin{center}%
+  \begin{tabularx}{\linewidth}[]{@{}*{\thepunkte}{>{\centering\arraybackslash} X|}@{}>{\centering\arraybackslash}X}
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        \thepunktelistectr &
+      }
+      #2 &  $\Sigma$ \\
+      \hline
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+    \end{tabularx}
+  \end{center}
+}
+\begin{document}
+
+\begin{tabularx}{\linewidth}{m{0.3 \linewidth}X}
+  \begin{minipage}{\linewidth}
+    \STUDENTA\\
+    \STUDENTB
+  \end{minipage} & \begin{minipage}{\linewidth}
+    \punkteliste{1}{\EXERCISES}
+  \end{minipage}\\
+\end{tabularx}
+\header{Nr. \NUMBER}{\DEADLINE}
+
+
+\section*{1.1 Primary Ray-Generation for a Perspective Camera Model}
+
+\section*{1.2 Ray-Surface Intersection}
+    \subsection*{a)}
+        As the plane is defined by $(p-n)\cdot a=0$, in order to check if $r(t)$
+        is in the plane, we have to find a $t$ such that $(r(t)-n)\cdot a=0$.
+        \begin{align*}
+            &(r(t)-n)\cdot a=0\\
+            &((o+t\cdot d)-a)\cdot n=0\\
+            &(o+t\cdot d) \cdot n -a\cdot n=0\\
+            &(o+t\cdot d) \cdot n =a\cdot n\\
+            &o\cdot n+t\cdot d\cdot n =a\cdot n\\
+            &t\cdot d\cdot n =a\cdot n-o\cdot n\\
+            &t\cdot d\cdot n =a\cdot n-o\cdot n\\
+            &t=\frac{a\cdot n-o\cdot n}{d\cdot n}\\
+        \end{align*}
+        This fraction exists if $d\cdot n \neq 0$, or in other words the vector
+        $d$ of the ray is not parallel to the plane. 
+    \subsection*{b)}
+        In order for $r(t)$ to intersect a bounding box, it has to exist an $t$,
+        such that all cordinates of $r(t)$ are within the boundaries defined by
+        $min$ and $max$. Looking at the $min$ value of $x$ direction first:\\
+        \begin{align*}
+            & o_x + t_{min_x} \cdot d_x = x_{min}\\
+            &\Rightarrow t_{min_x}=\frac{x_{min}-o_x }{d_x }
+        \end{align*}
+        We see that $t_{min}\geq\frac{x_{min}-o_x }{d_x }$, so that the x
+        coordinate of $r(t)$ can be in our box. If we proceed similar for $y,z$
+        coordinates, we end up with $t_{min}=\frac{min-o}{d}$, where the
+        division is the element wise division. The same applied to $max$ results
+        in $t_{max}=\frac{max-o}{d}$.\\
+        If $max(t_{min}) > min(t_{max})$, then $r(t)$ doesn't pass through our
+        box, since before the last of our coordinates is within our box, the
+        first of the other coordinates is out of the box again. Otherwise,
+        $r(t)$ passes throught our box. The first $t$ where it does so is
+        $max(t_{min})$.
+    \subsection*{c)}
+        There are several ways to do this, here we show a parametical check:\\
+        $r(t)$ can only pass through the triangle, if it passes through the
+        plane we get if we extend the triangle. We get the normal of the plane
+        by computing $n=(p_2 - p_1)\times (p_3 - p_1)$.\\
+        If we set $a=p_3$, we can compute the intersection point $p$ of $r(t)$
+        and the plane according to 1.2 a). In order to check if $p$ is on the
+        plane, we check there exist $\alpha , \beta$ such that $p=p_1 + \alpha
+        \cdot (p_2 - p_1 ) + \beta (p_3 - p_1 )$, with $\alpha , \beta \geq 0,
+        \alpha + \beta \leq 1$.
+
+\end{document}
