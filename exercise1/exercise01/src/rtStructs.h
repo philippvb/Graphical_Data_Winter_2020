@@ -124,9 +124,22 @@ struct AABB
 	inline bool intersect(const Ray &r, float &intervalMin,
 			float &intervalMax) const
 	{
-		// TODO b) Ray Tracing
+		// TODO [Done}] b) Ray Tracing
+		Vec3 t_diffmin=bounds[0]-r.origin;
+		Vec3 t_min=Vec3(t_diffmin.x/r.dir.x, t_diffmin.y/r.dir.y, t_diffmin.z/r.dir.z);
 
-		return false;
+		Vec3 t_diffmax=bounds[1]-r.origin;
+		Vec3 t_max=Vec3(t_diffmax.x/r.dir.x, t_diffmax.y/r.dir.y, t_diffmax.z/r.dir.z);
+
+		int t_min_min= t_min[t_min.maxIndex()];
+		int t_max_min= t_max[(-1*t_max).maxIndex()];
+
+		if (t_min_min > t_max_min){
+			return false;
+		}
+		else{
+			return true;
+		}
 	}
 };
 
@@ -144,11 +157,24 @@ struct Triangle
 	 */
 	inline AABB getAABB() const
 	{
-		AABB bbox;
 
-		// TODO a) Bounding Box Computation
+		// TODO a) [Done] Bounding Box Computation
+		AABB bbox=AABB();
 
-		return bbox;
+		// init min and max to first vector
+		Vec3 min = Vec3(v[0][0], v[0][1], v[0][2]);
+		Vec3 max = Vec3(v[0][0], v[0][1], v[0][2]);
+
+
+		// see if value of remaining vectors is smaller min or larger max
+		for (int i = 1; i <3; i++) {
+			min.minf(v[i]);
+			min.maxf(v[i]);
+		}
+
+
+
+		return AABB(min, max);
 	}
 
 	/**
@@ -162,12 +188,21 @@ struct Triangle
 	{
 		AABB bbox;
 
-		// TODO a) Bounding Box Computation
+		// TODO [Done] a) Bounding Box Computation for multiple triangles
 		// Replace the following ground truth:
 		// ====================================================================
-		bbox.bounds[0] = Vec3(-177.535, -175.185, -509.155);
-		bbox.bounds[1] = Vec3(179.165, 184.861, -88.5957);
+
+		// have to initialize in advance??
+
+		for(int i=0; i<nTris; i++){
+			Vec3 tri_bounds[] = tris[i].getAABB().bounds;
+			bbox.bounds[0].minf(tri_bounds[0]);
+			bbox.bounds[1].maxf(tri_bounds[1]);
+		}
+
 		// ====================================================================
+
+
 
 		return bbox;
 	}

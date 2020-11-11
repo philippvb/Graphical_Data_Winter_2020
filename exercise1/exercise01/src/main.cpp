@@ -6,8 +6,9 @@
 #include "utils/vec.h"
 #include "utils/fileio.h"
 
-// TODO c) Primary Ray Generation: Replace with your own camera model!
-Cam *cam;
+// TODO  [Done ]c) Primary Ray Generation: Replace with your own camera model!
+//Cam *cam;
+Cam-Perspective *cam;
 
 #ifdef INTERACTIVE
 #include <SDL/SDL.h>
@@ -155,7 +156,9 @@ int main(int argc, char **argv)
 	buffer = new Vec3[ResX * ResY];
 
 	// TODO c) Primary Ray Generation: Replace with your own camera model!
-	cam = new Cam(box, ResX, ResY);
+	//cam = new Cam(box, ResX, ResY);
+
+
 	//cam = new MyCam(Vec3(0.0f, 0.0f, 120.0f), Vec3(0.0f, 0.0f, -1.0f),
 	//		Vec3(0.0f, 1.0f, 0.0f), ResX, ResX, ResY);
 
