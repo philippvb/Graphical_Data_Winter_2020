@@ -124,49 +124,22 @@ struct AABB
 	inline bool intersect(const Ray &r, float &intervalMin,
 			float &intervalMax) const
 	{
-		// TODO b) Ray Tracing
+		// TODO [Done}] b) Ray Tracing
+		Vec3 t_diffmin=bounds[0]-r.origin;
+		Vec3 t_min=Vec3(t_diffmin.x/r.dir.x, t_diffmin.y/r.dir.y, t_diffmin.z/r.dir.z);
 
-		if (r.dir.x > 0){
-			intervalMin = maxf(intervalMin, (bounds[0].x - r.origin.x) / r.dir.x);
-			intervalMax = minf(intervalMax, (bounds[1].x - r.origin.x) / r.dir.x);
-		}else if (r.dir.x < 0){
-			intervalMin = maxf(intervalMax, (bounds[1].x - r.origin.x) / r.dir.x);
-			intervalMax = minf(intervalMin, (bounds[0].x - r.origin.x) / r.dir.x);
-		}else{
-			if (bounds[0].x < r.origin.x < bounds[1].x){
+		Vec3 t_diffmax=bounds[1]-r.origin;
+		Vec3 t_max=Vec3(t_diffmax.x/r.dir.x, t_diffmax.y/r.dir.y, t_diffmax.z/r.dir.z);
 
-			}else{
-				return false;
-			}
+		int t_min_min= t_min[t_min.maxIndex()];
+		int t_max_min= t_max[(-1*t_max).maxIndex()];
+
+		if (t_min_min > t_max_min){
+			return false;
 		}
-		if (r.dir.y > 0){
-			intervalMin = maxf(intervalMin, (bounds[0].y - r.origin.y) / r.dir.y);
-			intervalMax = minf(intervalMax, (bounds[1].y - r.origin.y) / r.dir.y);
-		}else if (r.dir.y < 0){
-			intervalMin = maxf(intervalMax, (bounds[1].y - r.origin.y) / r.dir.y);
-			intervalMax = minf(intervalMin, (bounds[0].y - r.origin.y) / r.dir.y);
-		}else{
-			if (bounds[0].y < r.origin.y < bounds[1].y){
-
-			}else{
-				return false;
-			}
+		else{
+			return true;
 		}
-		if (r.dir.z > 0){
-			intervalMin = maxf(intervalMin, (bounds[0].z - r.origin.z) / r.dir.z);
-			intervalMax = minf(intervalMax, (bounds[1].z - r.origin.z) / r.dir.z);
-		}else if (r.dir.z < 0){
-			intervalMin = maxf(intervalMax, (bounds[1].z - r.origin.z) / r.dir.z);
-			intervalMax = minf(intervalMin, (bounds[0].z - r.origin.z) / r.dir.z);
-		}else{
-			if (bounds[0].z < r.origin.z < bounds[1].z){
-
-			}else{
-				return false;
-			}
-		}
-
-		return (intervalMin <= intervalMax);
 	}
 };
 
@@ -185,17 +158,23 @@ struct Triangle
 	inline AABB getAABB() const
 	{
 
-		Vec3 min = v[0];
-		min.minf(v[1]);
-		min.minf(v[2]);
-		Vec3 max = v[0];
-		max.maxf(v[1]);
-		max.maxf(v[2]);
+		// TODO a) [Done] Bounding Box Computation
+		AABB bbox=AABB();
 
-		// TODO a) Bounding Box Computation
-		AABB bbox = AABB(min, max);
+		// init min and max to first vector
+		Vec3 min = Vec3(v[0][0], v[0][1], v[0][2]);
+		Vec3 max = Vec3(v[0][0], v[0][1], v[0][2]);
 
-		return bbox;
+
+		// see if value of remaining vectors is smaller min or larger max
+		for (int i = 1; i <3; i++) {
+			min.minf(v[i]);
+			min.maxf(v[i]);
+		}
+
+
+
+		return AABB(min, max);
 	}
 
 	/**
@@ -207,29 +186,23 @@ struct Triangle
 	 */
 	static AABB getAABB(const Triangle * const tris, const unsigned int nTris)
 	{
+		AABB bbox;
 
-		Vec3 min = tris[0].v[0];
-		Vec3 max = tris[0].v[0];
-
-		for (int i=0; i < nTris; i++){
-			min.minf(tris[i].v[0]);
-			min.minf(tris[i].v[1]);
-			min.minf(tris[i].v[2]);
-
-			max.maxf(tris[i].v[0]);
-			max.maxf(tris[i].v[1]);
-			max.maxf(tris[i].v[2]);
-		}
-
-
-		AABB bbox = AABB(min, max);
-
-		// TODO a) Bounding Box Computation
+		// TODO [Done] a) Bounding Box Computation for multiple triangles
 		// Replace the following ground truth:
 		// ====================================================================
-		// bbox.bounds[0] = Vec3(-177.535, -175.185, -509.155);
-		// bbox.bounds[1] = Vec3(179.165, 184.861, -88.5957);
+
+		// have to initialize in advance??
+
+		for(int i=0; i<nTris; i++){
+			Vec3 tri_bounds[] = tris[i].getAABB().bounds;
+			bbox.bounds[0].minf(tri_bounds[0]);
+			bbox.bounds[1].maxf(tri_bounds[1]);
+		}
+
 		// ====================================================================
+
+
 
 		return bbox;
 	}
@@ -249,62 +222,25 @@ struct Triangle
 	{
 		// TODO b) Ray Tracing
 		// Replace the following dummy code!
-
-
-
-		// check for the intersection with the plane
-		Vec3 normal;
-		normal = Vec3::cross((v[1] - v[0]), (v[2] - v[0]));
-		float t;
-		if ((ray.dir * normal) != 0){
-			t = ((v[0] * normal) - (ray.origin * normal)) / (ray.dir * normal);
-		}else{
-			// The ray is parallel to the plane TODO check if origin is on plane
-			return false;
-		}
-
-		if (!(ray.tmin < t && t < ray.tmax)) {
-			return false;
-		}
-
-		Vec3 q = ray.origin + ray.dir * t;
-
-		// check if point q is in the triangle
-		if (Vec3::cross(v[1] - v[0], q - v[0]) * normal >= 0 &&
-			Vec3::cross(v[2] - v[1], q - v[1]) * normal >= 0 &&
-			Vec3::cross(v[0] - v[2], q - v[2]) * normal >= 0){
-
-			if (t < rec.dist){
-				rec.dist = t;
-				rec.id = tri_id;
-			}
-			return true;
-		}else{
-			return false;
-		}
-
-
 		// ============================================================
 		// Just check if the ray goes somewhere close to a vertex:
 		// Iterate over all vertices
-//		for (unsigned int i = 0; i < 3; i++)
-//		{
-//			Vec3 dirToVertex = v[i] - ray.origin;
-//			float distToVertex = dirToVertex.length();
-//			dirToVertex.normalize();
-//			if (dirToVertex * ray.dir > 0.9999f) // Vertex approximately in ray direction?
-//			{
-//				if (distToVertex < rec.dist) // Distance shorter than previous?
-//				{
-//					rec.id = tri_id;
-//					rec.dist = distToVertex;
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-
-
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			Vec3 dirToVertex = v[i] - ray.origin;
+			float distToVertex = dirToVertex.length();
+			dirToVertex.normalize();
+			if (dirToVertex * ray.dir > 0.9999f) // Vertex approximately in ray direction?
+			{
+				if (distToVertex < rec.dist) // Distance shorter than previous?
+				{
+					rec.id = tri_id;
+					rec.dist = distToVertex;
+					return true;
+				}
+			}
+		}
+		return false;
 		// ============================================================
 	}
 
@@ -327,10 +263,8 @@ struct Triangle
 	inline Vec3 getNormal() const
 	{
 		// TODO d) Diffuse Shading: Return the normal of the triangle.
-		Vec3 normal;
-		normal = Vec3::cross((v[1] - v[0]), (v[2] - v[0]));
-//		normal.normalize();
-		return normal;
+
+		return Vec3(0.0f, 0.0f, 1.0f);
 	}
 
 };

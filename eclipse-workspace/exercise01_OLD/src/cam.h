@@ -59,43 +59,31 @@ inline Ray Cam::getRay(const float x, const float y) const
 	return Ray(eye, dir, 0.0f, RAY_MAX);
 }
 
-// TODO c) Primary Ray Generation: Implement another camera model here!
-
-
-
+// TODO [Done] c) Primary Ray Generation: Implement another camera model here!
 
 
 /**
- * Perspective Camera Model
+ * Perspective camera watching a AABB into z direction.
  */
-
-struct MyCam
+struct Cam_Perspective
 {
-
-	// camera origin
-	Vec3 o;
-	/// Viewing direction of the camera (always (0,0,1)).
-	Vec3 dir;
-	// up vector
-	Vec3 u;
-	// focal length
-	int focal_length;
+	/// Volume watched by the camera.
+	AABB box;
 	/// Resolution of the image plane in horizontal direction.
 	int ResX;
 	/// Resolution of the image plane in vertical direction.
 	int ResY;
+	/// Extent of the observed volume.
+	Vec3 extent;
+	/// Viewing direction of the camera (always (0,0,1)).
+	Vec3 dir;
+	Vec3 up;
+	Vec3 right;
 
-
-
-//	/// Volume watched by the camera.
-//	AABB box;
-//	/// Extent of the observed volume.
-//	Vec3 extent;
-
-//	/// Contains the step size per pixel in horizontal direction.
-//	float xstep;
-//	/// Contains the step size per pixel in vertical direction.
-//	float ystep;
+	/// Contains the step size per pixel in horizontal direction.
+	float xstep;
+	/// Contains the step size per pixel in vertical direction.
+	float ystep;
 
 	/**
 	 * Initializes the camera.
@@ -103,24 +91,18 @@ struct MyCam
 	 * @param ResX See ResX.
 	 * @param ResY See ResY.
 	 */
-
-	MyCam(const Vec3 &o, const Vec3 &dir, const Vec3 u, const int focal_length, const int ResX,
-			const int ResY) :
-				o(o), dir(dir), u(u), focal_length(focal_length), ResX(ResX), ResY(ResY)
+	Cam_Perspective(const AABB &box, const int ResX, const int ResY) :
+			box(box), ResX(ResX), ResY(ResY)
 	{
-//		dir = Vec3(0.0f, 0.0f, 1.0f);
+		extent = box.bounds[1] - box.bounds[0];
 
+		xstep = extent[0] / (float) ResX;
+		ystep = extent[1] / (float) ResY;
+
+		dir = Vec3(0.0f, 0.0f, 1.0f);
+		up = Vec3(0.0f, 1.0f, 0.0f);
+		right = Vec3(1.0f, 0.0f, 0.0f);
 	}
-
-//	Cam(const AABB &box, const int ResX, const int ResY) :
-//			box(box), ResX(ResX), ResY(ResY)
-//	{
-//		extent = box.bounds[1] - box.bounds[0];
-//
-//		xstep = extent[0] / (float) ResX;
-//		ystep = extent[1] / (float) ResY;
-//
-//	}
 
 	/**
 	 * Returns a gamera ray given pixel coordinates on the image plane.
@@ -128,20 +110,14 @@ struct MyCam
 	 * @param y Y coordinate on the image plane in [0, ResY-1].
 	 * @returns Ray according to the given pixel coordinates.
 	 */
-	Ray getRay(const float x, const float y) const;
+	Ray getRay(const float x, const float y) const{
+			Vec3 eye=Vec3((box.bounds[1].x-box.bounds[0].x)/2, (box.bounds[1].y-box.bounds[0].y)/2,0);
+			// assuming the image plane is f=1 away
+			Vec3 intersection_d_plane = eye + dir;
+			Vec3 newdir = intersection_d_plane + up * y * ystep + right * x * xstep;
+			return Ray(eye, newdir, 0.0f, RAY_MAX);
+	}
 };
-
-inline Ray MyCam::getRay(const float x, const float y) const
-{
-	Vec3 ray_dir = focal_length * dir + (x - (ResX / 2)) * Vec3::cross(dir, u) + (y - (ResY / 2)) * u;
-//	ray_dir.normalize();
-	Ray ray = Ray(o, ray_dir, 0.0f, RAY_MAX);
-
-	return ray;
-}
-
-
-
 
 
 #endif

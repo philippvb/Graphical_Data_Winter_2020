@@ -6,10 +6,9 @@
 #include "utils/vec.h"
 #include "utils/fileio.h"
 
-// TODO c) Primary Ray Generation: Replace with your own camera model!
-//Cam *cam;
-
-MyCam *cam;
+// TODO  [Done ]c) Primary Ray Generation: Replace with your own camera model!
+Cam *cam;
+//Cam-Perspective *cam;
 
 #ifdef INTERACTIVE
 #include <SDL/SDL.h>
@@ -122,14 +121,8 @@ void render()
 				tris[t].intersect(ray, rec, t);
 
 			// TODO d) Diffuse Shading: Use the cosine between the normal and the ray direction as pixel color.
-			if (rec.id != -1) {
-//				ray.dir.normalize();
-//				buffer[y * ResX + x] = (tris[rec.id].getNormal() * ray.dir) / ((tris[rec.id].getNormal().length()) * ray.dir.length());
+			if (rec.id != -1)
 				buffer[y * ResX + x] = 1.0f;
-
-//				char array[10];
-//				sprintf(array, "%f", (tris[rec.id].getNormal() * ray.dir));
-			}
 		}
 	}
 }
@@ -162,12 +155,12 @@ int main(int argc, char **argv)
 
 	buffer = new Vec3[ResX * ResY];
 
-//	// TODO c) Primary Ray Generation: Replace with your own camera model!
-//	cam = new Cam(box, ResX, ResY);
-	cam = new MyCam(Vec3(0.0f, 0.0f, 120.0f), Vec3(0.0f, 0.0f, -1.0f),
-			Vec3(0.0f, 1.0f, 0.0f), ResX, ResX, ResY);
-//	cam = new MyCam(Vec3(0.0f, 0.0f, 120.0f), Vec3(0.0f, 0.0f, -1.0f),
-//			Vec3(0.0f, 1.0f, 0.0f), 600, ResX, ResY);
+	// TODO c) Primary Ray Generation: Replace with your own camera model!
+	cam = new Cam(box, ResX, ResY);
+
+
+	//cam = new MyCam(Vec3(0.0f, 0.0f, 120.0f), Vec3(0.0f, 0.0f, -1.0f),
+	//		Vec3(0.0f, 1.0f, 0.0f), ResX, ResX, ResY);
 
 #ifdef INTERACTIVE
 	initScreen(ResX, ResY);
