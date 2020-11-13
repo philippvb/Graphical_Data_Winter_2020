@@ -72,12 +72,15 @@ image plane for a given coordinate $x$, we compute $x_{diff}=x-\frac{resX}{2}$.
 Similar for $y$ direction. In combination, we end up with $d_r = o + f \cdot d+
 u \cdot (y-\frac{resY}{2}) + v \cdot (x-\frac{resX}{2})$
 
+TODO I believe it is 
+$$d_r = f \cdot d + (x - \frac{resX}{2}) \cdot (d \times u) + (y - \frac{resY}{2}) \cdot u$$
+
 \section*{1.2 Ray-Surface Intersection}
     \subsection*{a)}
         As the plane is defined by $(p-n)\cdot a=0$, in order to check if $r(t)$
         is in the plane, we have to find a $t$ such that $(r(t)-n)\cdot a=0$.
         \begin{align*}
-            &(r(t)-n)\cdot a=0\\
+            &(r(t)-a)\cdot n=0\\
             &((o+t\cdot d)-a)\cdot n=0\\
             &(o+t\cdot d) \cdot n -a\cdot n=0\\
             &(o+t\cdot d) \cdot n =a\cdot n\\
@@ -106,6 +109,10 @@ u \cdot (y-\frac{resY}{2}) + v \cdot (x-\frac{resX}{2})$
         first of the other coordinates is out of the box again. Otherwise,
         $r(t)$ passes throught our box. The first $t$ where it does so is
         $max(t_{min})$.
+
+        TODO I belive this does not hold for $d_i$ < 0, then the $t_{min_i} and t_{max_i}$ have to be switched.
+
+
     \subsection*{c)}
         There are several ways to do this, here we show a parametical check:\\
         $r(t)$ can only pass through the triangle, if it passes through the
@@ -116,5 +123,7 @@ u \cdot (y-\frac{resY}{2}) + v \cdot (x-\frac{resX}{2})$
         plane, we check there exist $\alpha , \beta$ such that $p=p_1 + \alpha
         \cdot (p_2 - p_1 ) + \beta (p_3 - p_1 )$, with $\alpha , \beta \geq 0,
         \alpha + \beta \leq 1$.
+
+        TODO How do you compute $\alpha, \beta$?
 
 \end{document}
