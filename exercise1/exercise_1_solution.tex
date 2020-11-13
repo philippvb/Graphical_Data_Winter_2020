@@ -62,18 +62,16 @@
 
 
 \section*{1.1 Primary Ray-Generation for a Perspective Camera Model}
-To get to the center of image plane from the origin, we have to move in
-direction of the viewing direction $d$: $o+f\cdot d$. To move in $y$ direction
-in the image plane, the vector is already given as the up-verctor $u$. As the
+To get to the center of the image plane from the origin, we have to move in
+direction of the viewing direction $d$: $f\cdot d$. To move in $y$ direction
+in the image plane, the vector is already given as the up-vector $u$. As the
 vector in $x$ direction is perpendicular to both $d$ and $u$, we can construct
 it by $v=d\times u$. Because $u$ and $d$ are normalized, $v$ is also normalized.
 To computed how far we have to move in $x$ direction from the center of our
 image plane for a given coordinate $x$, we compute $x_{diff}=x-\frac{resX}{2}$.
-Similar for $y$ direction. In combination, we end up with $d_r = o + f \cdot d+
-u \cdot (y-\frac{resY}{2}) + v \cdot (x-\frac{resX}{2})$
-
-TODO I believe it is 
+Similar for $y$ direction. In combination, we end up with
 $$d_r = f \cdot d + (x - \frac{resX}{2}) \cdot (d \times u) + (y - \frac{resY}{2}) \cdot u$$
+With this definition, the origin of the image plane (pixel coordinates 0,0) is at the lower left.
 
 \section*{1.2 Ray-Surface Intersection}
     \subsection*{a)}
