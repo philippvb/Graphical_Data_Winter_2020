@@ -121,16 +121,24 @@ With this definition, the origin of the image plane (pixel coordinates 0,0) is a
 
 
     \subsection*{c)}
-        There are several ways to do this, here we show a parametical check:\\
-        $r(t)$ can only pass through the triangle, if it passes through the
-        plane we get if we extend the triangle. We get the normal of the plane
+        There are several ways to do this, here we show an algebraic check:\\
+        $r(t)$ can only pass through the triangle at the point where it crosses 
+        the plane that is extending the triangle.
+        We get the normal of the plane
         by computing $n=(p_2 - p_1)\times (p_3 - p_1)$.\\
-        If we set $a=p_3$, we can compute the intersection point $p$ of $r(t)$
-        and the plane according to 1.2 a). In order to check if $p$ is on the
-        plane, we check there exist $\alpha , \beta$ such that $p=p_1 + \alpha
-        \cdot (p_2 - p_1 ) + \beta (p_3 - p_1 )$, with $\alpha , \beta \geq 0,
-        \alpha + \beta \leq 1$.
+        If we set $a=p_3$, we can compute the intersection point $q$ of $r(t)$
+        and the plane according to 1.2 a). 
+        
+        In order to check if $q$ is in the triangle we need to check if this point is on
+        that side of each of the lines that enclose the triangle that is the same side as the 
+        triangle. For example the cross product of $p_2 - p_1$ with $q - p_1$ should point in 
+        the same direction as the normal of the plane. 
 
-        TODO How do you compute $\alpha, \beta$?
+        For all lines this is done by checking:
+        \begin{align*}
+          ((p_2 - p_1) \times (q - p_1)) \cdot n \geq 0 \\
+          ((p_3 - p_2) \times (q - p_2)) \cdot n \geq 0 \\
+          ((p_1 - p_3) \times (q - p_3)) \cdot n \geq 0 
+        \end{align*}
 
 \end{document}
