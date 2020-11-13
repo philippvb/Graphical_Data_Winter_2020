@@ -90,25 +90,34 @@ With this definition, the origin of the image plane (pixel coordinates 0,0) is a
         This fraction exists if $d\cdot n \neq 0$, or in other words the vector
         $d$ of the ray is not parallel to the plane. 
     \subsection*{b)}
-        In order for $r(t)$ to intersect a bounding box, it has to exist an $t$,
-        such that all cordinates of $r(t)$ are within the boundaries defined by
-        $min$ and $max$. Looking at the $min$ value of $x$ direction first:\\
-        \begin{align*}
-            & o_x + t_{min_x} \cdot d_x = x_{min}\\
-            &\Rightarrow t_{min_x}=\frac{x_{min}-o_x }{d_x }
+        For the ray to be possibly in the bounding box for the x-,y-, or z-Direction it needs to hold:
+            
+        \begin{align*}{}
+          min_i \leq r(t)_i \leq max_i \\
+          min_i \leq o_i + t d_i \leq max_i \\
         \end{align*}
-        We see that $t_{min}\geq\frac{x_{min}-o_x }{d_x }$, so that the x
-        coordinate of $r(t)$ can be in our box. If we proceed similar for $y,z$
-        coordinates, we end up with $t_{min}=\frac{min-o}{d}$, where the
-        division is the element wise division. The same applied to $max$ results
-        in $t_{max}=\frac{max-o}{d}$.\\
-        If $max(t_{min}) > min(t_{max})$, then $r(t)$ doesn't pass through our
-        box, since before the last of our coordinates is within our box, the
-        first of the other coordinates is out of the box again. Otherwise,
-        $r(t)$ passes throught our box. The first $t$ where it does so is
-        $max(t_{min})$.
+        for $d_i > 0$ this is:
+        \begin{align*}
+          \frac{min_i - o_i}{d_i} \leq t \leq \frac{max_i - o_i}{d_i}          
+        \end{align*} 
+        for $d_i < 0$ this is:
+        \begin{align*}
+          \frac{max_i - o_i}{d_i} \leq t \leq \frac{min_i - o_i}{d_i}          
+        \end{align*} 
 
-        TODO I belive this does not hold for $d_i$ < 0, then the $t_{min_i} and t_{max_i}$ have to be switched.
+        If $d_i = 0$ we check if $min_i < o_i < max_i$. If this is the case we set 
+        ${t_{low}}_i = -\infty$ and ${t_{high}}_i = \infty$. Else there are no intersections with the bounding box
+        
+        In this way we have defined ranges for $t$ for each of the dimensions. 
+        To find the total range of $t$ we have to take the maximum of the lower ends of the 
+        ranges and the minimum of the upper ends of the ranges.
+
+        We calculate $t_{low} = \frac{min - o}{d}$ and $t_{high} = \frac{max - o}{d}$
+        for each dimension (x,y,z) we swap ${t_{low}}_i$ and ${t_{high}}_i$ if $d_i < 0$ to get $t'_{low}$ and $t'_{high}$.
+        
+        The ray is in the bounding box for $\max(t'_{low}) \leq t \leq \min(t'_{high})$. If $\max(t'_{low}) > \min(t'_{high})$, then
+        there are no intersections of the ray with the bounding box. The first intersection of the ray with the bounding box is for 
+        $\max(t'_{low})$
 
 
     \subsection*{c)}
