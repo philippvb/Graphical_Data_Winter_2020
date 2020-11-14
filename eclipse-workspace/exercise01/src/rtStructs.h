@@ -328,8 +328,8 @@ struct Triangle
 	{
 		// TODO d) Diffuse Shading: Return the normal of the triangle.
 		Vec3 normal;
-		normal = Vec3::cross((v[1] - v[0]), (v[2] - v[0]));
-//		normal.normalize();
+		normal = Vec3::cross((v[2] - v[0]), (v[1] - v[0]));
+		normal.normalize();
 		return normal;
 	}
 

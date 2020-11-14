@@ -134,7 +134,7 @@ struct MyCam
 inline Ray MyCam::getRay(const float x, const float y) const
 {
 	Vec3 ray_dir = focal_length * dir + (x - (ResX / 2)) * Vec3::cross(dir, u) + (y - (ResY / 2)) * u;
-//	ray_dir.normalize();
+	ray_dir.normalize();
 	Ray ray = Ray(o, ray_dir, 0.0f, RAY_MAX);
 
 	return ray;

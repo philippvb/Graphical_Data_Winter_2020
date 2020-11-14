@@ -123,12 +123,7 @@ void render()
 
 			// TODO d) Diffuse Shading: Use the cosine between the normal and the ray direction as pixel color.
 			if (rec.id != -1) {
-//				ray.dir.normalize();
-//				buffer[y * ResX + x] = (tris[rec.id].getNormal() * ray.dir) / ((tris[rec.id].getNormal().length()) * ray.dir.length());
-				buffer[y * ResX + x] = 1.0f;
-
-//				char array[10];
-//				sprintf(array, "%f", (tris[rec.id].getNormal() * ray.dir));
+				buffer[y * ResX + x] = tris[rec.id].getNormal() * ray.dir;
 			}
 		}
 	}
