@@ -1,6 +1,8 @@
 #include "bvh.h"
 #include <assert.h>
 #include <iostream>
+#include "utils/vec.h"
+#include <list>
 
 using namespace std;
 
@@ -24,6 +26,21 @@ BVH::~BVH()
 void BVH::findSplitPlane(unsigned int* dimension, float* position, const AABB &box)
 {
 	// TODO b) Implement the method.
+	if(abs(box.bounds[1].x-box.bounds[0].x) > abs(box.bounds[1].y-box.bounds[0].y)){
+		if(abs(box.bounds[1].x-box.bounds[0].x) > abs(box.bounds[1].z-box.bounds[0].z)){
+			*position = box.bounds[1].x + (box.bounds[1].x-box.bounds[0].x)/2;
+			*dimension=0;
+		}
+		else if (abs(box.bounds[1].y-box.bounds[0].y) > abs(box.bounds[1].z-box.bounds[0].z)){
+			*position= box.bounds[1].y + (box.bounds[1].y-box.bounds[0].y)/2;
+			*dimension=1;
+		}
+	}
+	else{
+		*position= box.bounds[1].z + (box.bounds[1].z-box.bounds[0].z)/2;
+		*dimension=2;
+	}
+
 }
 
 void BVH::buildBVH(int nodeIndex, int triIndex, int numTris, int depth)
@@ -33,14 +50,86 @@ void BVH::buildBVH(int nodeIndex, int triIndex, int numTris, int depth)
 	// - Find the split plane using the method from b)
 	// - Sort all triangles belonging to the currently processed node depending on their center's location relative to the split plane.
 	// - Recursively call this method to process subnodes.
-	// Don't forget about the base case (no split needed)!
+	// Don't forget about the base case (no split needed)!#
+
+	//check if leaf node, if so add values
+	if (numTris==1){
+		nodes[nodeIndex].bbox=tris[indices[triIndex]].getAABB();
+		nodes[nodeIndex].left=-1;
+		nodes[nodeIndex].right=-1;
+		nodes[nodeIndex].triIndex=triIndex;
+		nodes[nodeIndex].numTris=numTris;
+		return;
+	}
+
+	// build bounding box
+	Triangle* node_tris=new Triangle[numTris];
+	for(int index=triIndex; index < triIndex + numTris; index++){
+		node_tris[index - triIndex]=tris[indices[index]];
+	}
+
+	nodes[nodeIndex].bbox = Triangle::getAABB(node_tris, numTris);
+	unsigned int dimension;
+	float position=-1;
+	findSplitPlane(&dimension, &position, nodes[nodeIndex].bbox);
+
+	int left_upper=0;
+	int right_lower=numTris-1;
+
+
+	for (int index = triIndex; index < triIndex + numTris; index++) {
+		// check for every tris in node on which side of split it is
+		bool left_side = false;
+		for (int edge = 0; edge < 3; edge++) {
+			if (position == 0) {
+				if (tris[indices[index]].v[edge].x >= position) {
+					left_side = true;
+				}
+			} else if (position == 1) {
+				if (tris[indices[index]].v[edge].y >= position) {
+					left_side = true;
+				}
+			} else {
+				if (tris[indices[index]].v[edge].z >= position) {
+					left_side = true;
+				}
+			}
+		}
+		// rearrange the indices array such that the childs of the current node are sorted by [left, right]
+		if (left_side) {
+			int to_swap = indices[triIndex + left_upper];
+			indices[triIndex + left_upper] = indices[index];
+			indices[index]=to_swap;
+			left_upper++;
+		} else {
+			int to_swap = indices[triIndex + right_lower];
+			indices[triIndex + right_lower] = indices[index];
+			indices[index]=to_swap;
+			right_lower--;
+		}
+	}
+
+	// add left and right child
+
+
+	// build new left and right child node
+	nodes[nodeIndex].left=addedNodes;
+	addedNodes++;
+	buildBVH(addedNodes-1, triIndex, left_upper, depth+1);
+	nodes[nodeIndex].right=addedNodes;
+	addedNodes++;
+	buildBVH(addedNodes-1, triIndex+right_lower, numTris-1-right_lower, depth+1);
+
+	//Triangle left_tris[numTris];
+	//Triangle right_tris[numTris];
+
 
 	// current implementation just adds one leaf and exits
-	nodes[nodeIndex].bbox = Triangle::getAABB(tris, numTris);
-	nodes[nodeIndex].left = -1;
-	nodes[nodeIndex].right = -1;
-	nodes[nodeIndex].triIndex = 0;
-	nodes[nodeIndex].numTris = numTris;
+//	nodes[nodeIndex].bbox = Triangle::getAABB(tris, numTris);
+//	nodes[nodeIndex].left = -1;
+//	nodes[nodeIndex].right = -1;
+//	nodes[nodeIndex].triIndex = 0;
+//	nodes[nodeIndex].numTris = numTris;
 }
 
 HitRec BVH::intersect(const Ray &ray) const
