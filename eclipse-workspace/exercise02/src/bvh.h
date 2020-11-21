@@ -93,9 +93,13 @@ struct BVH
 	 */
 	HitRec intersect(const Ray &ray) const;
 
-	//void intersect_recursive(const Ray &ray, const Vec3 &invRayDir,  const unsigned int raySign[3][2], int node_index, HitRec &rec) const;
 
 	// add extra methods if needed (i.e. sortTriangles(...))
+
+    // void intersect_recursive(const Ray ray, const Vec3 invRayDir, const unsigned int raySign, int node_index, HitRec &rec);
+	void intersect_recursive(const Ray ray, const int node_index, HitRec &rec) const;
+	void swap_indices(int &ind_a, int &ind_b);
+	int sumNodeTris();
 };
 
 #endif
