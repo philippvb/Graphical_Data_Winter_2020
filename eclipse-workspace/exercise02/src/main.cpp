@@ -143,6 +143,8 @@ int main(int argc, char **argv)
 	std::cout << "Built BVH" << std::endl;
 	std::cout << "sumNodeTris: " << bvh->sumNodeTris() << std::endl;
 
+	bvh->individualTrisCount();
+
 	buffer = new Vec3[ResX * ResY];
 
 	cam = new PerspCam(Vec3(0.0f, 0.0f, 120.0f), Vec3(0.0f, 0.0f, -1.0f),

@@ -96,10 +96,12 @@ struct BVH
 
 	// add extra methods if needed (i.e. sortTriangles(...))
 
-    // void intersect_recursive(const Ray ray, const Vec3 invRayDir, const unsigned int raySign, int node_index, HitRec &rec);
-	void intersect_recursive(const Ray ray, const int node_index, HitRec &rec) const;
+	void intersect_recursive(const Ray ray, const int node_index, HitRec &rec, Vec3 invRayDir, const unsigned int raySign[3][2]) const;
 	void swap_indices(int &ind_a, int &ind_b);
+
+	// Debugging Functions
 	int sumNodeTris();
+	void individualTrisCount();
 };
 
 #endif

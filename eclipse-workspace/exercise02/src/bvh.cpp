@@ -3,7 +3,7 @@
 #include <iostream>
 #include "utils/vec.h"
 #include <list>
-#define MAX_DEPTH 5
+#define MAX_DEPTH 15
 using namespace std;
 
 BVH::BVH(const Triangle * const tris, const int nTris) :
@@ -47,8 +47,6 @@ void BVH::findSplitPlane(unsigned int* dimension, float* position, const AABB &b
 	float y_diff = abs(box.bounds[1].y-box.bounds[0].y);
 	float z_diff = abs(box.bounds[1].z-box.bounds[0].z);
 
-//	std::cout << x_diff << " " << y_diff << " " <<  z_diff << std::endl;
-
 	if (x_diff > y_diff) {
 		if (x_diff > z_diff) {
 			*position = (box.bounds[1].x+box.bounds[0].x)/2;
@@ -78,17 +76,10 @@ void BVH::buildBVH(int nodeIndex, int triIndex, int numTris, int depth)
 	// Don't forget about the base case (no split needed)!#
 	// build bounding box
 
-
-	std::cout << "nodeIndex: " << nodeIndex << "; triIndex: " << triIndex << "; numTris: " << numTris << "; depth: " << depth << std::endl;
-//	Triangle* node_tris=new Triangle[numTris];
-//
-//	// This should be equal
-//	for(int index = 0; index < numTris; index ++){
-//		node_tris[index] = tris[indices[triIndex + index]];
-//	}
-
-	// But actually we can just use the array from the correct location, because it is ordered
-	const Triangle* node_tris = &tris[triIndex];
+	Triangle* node_tris=new Triangle[numTris];
+	for(int index = 0; index < numTris; index ++){
+		node_tris[index] = tris[indices[triIndex + index]];
+	}
 
 	//check if leaf node, if so add values
 	if ((numTris<=1) || (depth>=MAX_DEPTH)){
@@ -118,33 +109,6 @@ void BVH::buildBVH(int nodeIndex, int triIndex, int numTris, int depth)
 	for (int index = triIndex; index <= triIndex + right_lower; index++) {
 		left_side = false;
 		right_side = false;
-
-//		// check for every tris in node on which side of split it is
-//		for (int edge = 0; edge < 3; edge++) {
-//			if (dimension == 0) {
-//				if (tris[indices[index]].v[edge].x <= position) {
-//					left_side = true;
-//				}else{
-//					right_side = true;
-//				}
-//			} else if (dimension == 1) {
-//				if (tris[indices[index]].v[edge].y <= position) {
-////					std::cout << "set_left_side_true" << std::endl;
-//					left_side = true;
-//				}else{
-//					right_side = true;
-//				}
-//			} else {
-//				if (tris[indices[index]].v[edge].z <= position) {
-//					std::cout << "on_left_side" << std::endl;
-//					left_side = true;
-//				}else{
-////					std::cout << "on_right_side" << std::endl;
-//					right_side = true;
-//				}
-//			}
-//		}
-
 
 		// Just use center of BBox for now
 		center = (tris[indices[index]].v[0] + tris[indices[index]].v[1] + tris[indices[index]].v[2]) / 3;
@@ -191,13 +155,6 @@ void BVH::buildBVH(int nodeIndex, int triIndex, int numTris, int depth)
 	buildBVH(addedNodes-1, triIndex+left_upper, numTris-left_upper, depth + 1);
 
 
-
-	// current implementation just adds one leaf and exits
-//	nodes[nodeIndex].bbox = Triangle::getAABB(tris, numTris);
-//	nodes[nodeIndex].left = -1;
-//	nodes[nodeIndex].right = -1;
-//	nodes[nodeIndex].triIndex = 0;
-//	nodes[nodeIndex].numTris = numTris;
 }
 
 
@@ -209,44 +166,13 @@ void BVH::swap_indices(int &ind_a, int &ind_b){
 
 
 
-//void BVH::intersect_recursive(const Ray ray, const Vec3 invRayDir,  const unsigned int raySign, int node_index, HitRec &rec){
-//
-//	// is leaf  node, then intersect all tris, save as hit record
-//	if (nodes[node_index].left ==-1 && nodes[node_index].right == -1){
-//		for(int i = nodes[node_index].triIndex; i < nodes[node_index].triIndex+nodes[node_index].numTris; i++){
-//			tris[indices[i]].intersect(ray, rec, i);
-//		}
-//	}
-//
-//	float dummy_interval_min;
-//	float dummy_interval_max;
-//
-//	if (nodes[node_index].bbox.intersect(ray,dummy_interval_min, dummy_interval_max,invRayDir, raySign)){
-//		intersect_recursive(ray, invRayDir, raySign, nodes[node_index].left, rec);
-//		intersect_recursive(ray, invRayDir, raySign, nodes[node_index].right, rec);
-//	}
-//}
 
-
-void BVH::intersect_recursive(const Ray ray, const int node_index, HitRec &rec) const {
-	// precompute inverse ray direction for bounding box intersection
-	// -> compute only once for bvh travesal
-	Vec3 invRayDir(1.0f / ray.dir.x, 1.0f / ray.dir.y, 1.0f / ray.dir.z);
-
-	// index array for ray signs (direction of the ray)
-	// -> saving costly if-operations during box intersection and traversal
-	unsigned int raySign[3][2];
-	raySign[0][0] = invRayDir[0] < 0;
-	raySign[1][0] = invRayDir[1] < 0;
-	raySign[2][0] = invRayDir[2] < 0;
-
-	raySign[0][1] = invRayDir[0] >= 0;
-	raySign[1][1] = invRayDir[1] >= 0;
-	raySign[2][1] = invRayDir[2] >= 0;
+void BVH::intersect_recursive(const Ray ray, const int node_index, HitRec &rec, Vec3 invRayDir, const unsigned int raySign[3][2]) const {
 
 	if (nodes[node_index].left ==-1 && nodes[node_index].right == -1){
 		for(int i = nodes[node_index].triIndex; i < nodes[node_index].triIndex+nodes[node_index].numTris; i++){
-			tris[indices[i]].intersect(ray, rec, i);
+			int tris_id = indices[i];
+			tris[indices[i]].intersect(ray, rec, tris_id);
 		}
 	}
 
@@ -254,8 +180,8 @@ void BVH::intersect_recursive(const Ray ray, const int node_index, HitRec &rec) 
 	float dummy_interval_max = FLT_MAX;
 
 	if (nodes[node_index].bbox.intersect(ray,dummy_interval_min, dummy_interval_max, invRayDir, raySign)){
-		intersect_recursive(ray, nodes[node_index].left, rec);
-		intersect_recursive(ray, nodes[node_index].right, rec);
+		intersect_recursive(ray, nodes[node_index].left, rec, invRayDir, raySign);
+		intersect_recursive(ray, nodes[node_index].right, rec, invRayDir, raySign);
 	}
 
 
@@ -287,24 +213,14 @@ HitRec BVH::intersect(const Ray &ray) const
 	// and intersect only the triangles in the leave nodes.
 	// Attention: Make sure that hit records and tmin/tmax values are not modified by node intersections!
 
-	intersect_recursive(ray, 0, rec);
-
-
-
-//	if (nodes[0].triIndex != -1)
-//	{
-//		for (int i = nodes[0].triIndex;
-//				i < nodes[0].triIndex + nodes[0].numTris; i++)
-//		{
-//			tris[indices[i]].intersect(ray, rec, i);
-//		}
-//	}
-
+	intersect_recursive(ray, 0, rec, invRayDir, raySign);
 
 
 	return rec;
 }
 
+
+// Debugging Functions
 
 // This returns the total number of tris in the BVH, it should be equal to the initial number
 int BVH::sumNodeTris(){
@@ -316,3 +232,32 @@ int BVH::sumNodeTris(){
 	}
 	return sum;
 }
+
+
+
+// if this function does not print anything, all individual tris have actually been found in the BVH (we did not lose any tris when building)
+void BVH::individualTrisCount(){
+	int *TrisCounts = new int[nTris];
+
+	for (int i = 0; i < nTris; i++){
+		TrisCounts[i] = 0;
+	}
+	for(int i=0; i < addedNodes; i++){
+		if (nodes[i].left == -1 && nodes[i].right == -1){
+			for(int tris_ind = nodes[i].triIndex; tris_ind < nodes[i].triIndex + nodes[i].numTris; tris_ind++){
+				TrisCounts[indices[tris_ind]]++;
+			}
+		}
+	}
+	for (int i = 0; i < nTris; i++){
+		if (TrisCounts[i] == 0){
+			std::cout << "index " << i << " not found" << std::endl;
+		}else{
+//			std::cout << "found tris " << i << std::endl;
+		}
+	}
+	delete[] TrisCounts;
+
+
+}
+
