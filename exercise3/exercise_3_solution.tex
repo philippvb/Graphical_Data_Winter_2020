@@ -1,0 +1,88 @@
+\newcommand{\NUMBER}{3}
+\newcommand{\EXERCISES}{4}
+% \newcommand{\DEADLINE}{16.11.20}
+\newcommand{\COURSE}{Graphical Data}
+\newcommand{\STUDENTA}{Philipp von Bachmann, \\Mat.-Nr.: 4116220}
+\newcommand{\STUDENTB}{David Ott, \\Mat.-Nr.: 4185646}
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, enumerate, amssymb, multirow, fancyhdr, color, graphicx, lastpage, listings, tikz, pdflscape, subfigure, float, polynom, hyperref, tabularx, forloop, geometry, listings, fancybox, tikz, forest, tabstackengine, cancel, hyperref}
+\input kvmacros
+\geometry{a4paper,left=3cm, right=3cm, top=3cm, bottom=3cm}
+\pagestyle {fancy}
+\fancyhead[C]{\COURSE}
+\fancyhead[R]{\today}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{Page \thepage /\pageref*{LastPage}}
+\def\header#1#2{
+  \begin{center}
+    {\Large Assignment #1}\\
+    %{(Due by: #2)}
+  \end{center}
+}
+
+\newcounter{punktelistectr}
+\newcounter{punkte}
+\newcommand{\punkteliste}[2]{%
+  \setcounter{punkte}{#2}%
+  \addtocounter{punkte}{-#1}%
+  \stepcounter{punkte}%<-- also punkte = m-n+1 = Anzahl Spalten[1]
+  \begin{center}%
+  \begin{tabularx}{\linewidth}[]{@{}*{\thepunkte}{>{\centering\arraybackslash} X|}@{}>{\centering\arraybackslash}X}
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        \thepunktelistectr &
+      }
+      #2 &  $\Sigma$ \\
+      \hline
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+    \end{tabularx}
+  \end{center}
+}
+\begin{document}
+
+\begin{tabularx}{\linewidth}{m{0.3 \linewidth}X}
+  \begin{minipage}{\linewidth}
+    \STUDENTA\\
+    \STUDENTB
+  \end{minipage} & \begin{minipage}{\linewidth}
+    \punkteliste{1}{\EXERCISES}
+  \end{minipage}\\
+\end{tabularx}
+\header{Nr. \NUMBER}{\DEADLINE}
+
+
+\section*{3.1 Reflection Rays}
+
+In general, the direction of a ray reflected at a normal is 
+$$ d_{ref} = 2 (n \cdot d) n-d$$
+
+We have to keep in mind that the ray that is reflected should point in the
+correct (therefore reversed) direction and that it starts at the new time
+$t_{hit}$. therefore the complete formula for the new ray is:
+
+
+
+\begin{align*}
+  r_{ref}(t) = o + t_{hit}d - (t-t_{hit}) 2(n \cdot d) n-d
+\end{align*}
+
+\section*{3.2 Front/Back-side of a triangle}
+The scalar product is $< 0$ for angles between two vectors greater than
+$90^\circ$ and $>0$ for angles between two vectors smaller than $90^\circ$.
+
+So the ray hits the triangle from the front, if $n \cdot d > 0$ and it hits it
+from the back if $n \cdot d < 0$. 
+
+
+
+\end{document}
