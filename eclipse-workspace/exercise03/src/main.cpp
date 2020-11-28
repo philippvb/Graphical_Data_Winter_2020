@@ -132,17 +132,21 @@ int firstMirrorTriangle;
 #define MAX_MIRROR_HITS 10
 #define TOTAL_SHADOW_RAYS 1000
 // Computes light intensity between source and intersection point of Tri, set to 0 if Tri is occluded
-Vec3 compute_light_intensity( Ray ray, HitRec rec, bool use_point_light){
+Vec3 compute_light_intensity( Ray ray, HitRec rec, bool use_point_light, bool use_mirror_shader, int mirror_depth){
 	Vec3 normal = bvh->tris[rec.id].getInterpolatedNormal(ray);
 	Vec3 hit_point=ray.origin + ray.dir * rec.dist;
 
 
 	// keep reflecting if mirror surface
-	if ((rec.id >= firstMirrorTriangle)&&(use_point_light)){
+	if ((rec.id >= firstMirrorTriangle)&&(use_mirror_shader)){
+		// Prevent endless mirroring between two surfaces
+		if (mirror_depth > MAX_MIRROR_HITS){
+			return Vec3(0,0,0);
+		}
 		Ray mirror_ray=Ray(hit_point, -((2 * (normal * ray.dir)) * normal - ray.dir), RAY_EPS, RAY_MAX);
 		HitRec new_rec=bvh->intersect(mirror_ray);
 		Vec3 total_intensity=Vec3(0,0,0);
-		total_intensity=compute_light_intensity(mirror_ray, new_rec, use_point_light);
+		total_intensity=compute_light_intensity(mirror_ray, new_rec, use_point_light, use_mirror_shader, mirror_depth + 1);
 		return total_intensity;
 	}
 
@@ -227,7 +231,7 @@ Vec3 rayTrace(const Ray &ray)
 		// TODO [ALMOST DONE] (mirror reflection is too bright) 3.5 Shade all triangles with rec.id >= firstMirrorTriangle with mirror shading instead of pointlight shading.
 
 		// Uncomment "#define POINTLIGHT_SHADER" for testing.
-		return compute_light_intensity(ray, rec, true);// Replace with point light / mirror shader shade color.
+		return compute_light_intensity(ray, rec, true, true, 0);// Replace with point light / mirror shader shade color.
 #endif
 
 #ifdef AREALIGHT_SHADER
@@ -236,7 +240,7 @@ Vec3 rayTrace(const Ray &ray)
 		// TODO 3.6 c) Implement shading by averaging the shade from 1000 random point lights from the area light's surface.
 
 		// Uncomment "#define AREALIGHT_SHADER" for testing.
-		return compute_light_intensity(ray, rec, false);
+		return compute_light_intensity(ray, rec, false, false, 0);
 #endif
 	}
 
@@ -353,6 +357,7 @@ int main(int argc, char **argv)
 	tris[num_tris - 1].n[2] = Vec3(0.0f, 1.0f, 0.0f);
 
 	firstMirrorTriangle = num_tris - 2;
+
 
 	std::cout << "#Triangles " << num_tris << std::endl;
 
