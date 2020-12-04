@@ -62,9 +62,33 @@
 
 
 \section*{4.1 Radiometry}
-
+\subsection*{a)}
+$\omega = (\theta, \phi)$
+\begin{align*}
+  E &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} L(x, \omega) \cos \theta \sin \theta d \theta d \phi \\
+  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{dA \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
+  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{\sin(\theta) d \theta d \phi \cdot r^2 \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
+  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \omega} \\
+  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \theta d \phi} \\
+  &= \\
+  &= \frac{\Phi_S \cos(\theta)}{4 \pi(r^2 + d^2)}
+\end{align*}
 
 \section*{4.2 Analytical solution of the rendering equation in 2D}
+
+
+
+\subsection*{b)}
+
+\begin{align*}
+  L(x, \omega_o) &= L_e(x, \omega_o) + \int_{y \in S} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\lvert x - y \rvert} \cdot d y_x \\
+  &= L_e(x, \omega_o) + \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\lvert x - y \rvert} \cdot d y_x \\
+  & \text{If we are not in a light source this is: } \\
+  &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\lvert x - y \rvert} \cdot d y_x \\
+  &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} \cdot d y_x \\
+  &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot 1 \cdot \frac{\cos \phi_i \cos \phi_y}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} \cdot d y_x \\
+  &= 
+\end{align*}
 
 
 \section*{4.3 Simple Path Tracer}
