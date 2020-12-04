@@ -62,9 +62,35 @@
 
 
 \section*{4.1 Radiometry}
+Let $w'$ be the direction from x to d
+\begin{align*}
+  E
+  &=\int_\omega L(x,w)cos(\theta )d \omega\\
+  &=L(x,w')cos(\theta )\\
+  &=\frac{d^2 \Phi cos(\theta )}{dA cos(\theta )d\omega }\\
+  \text{as a point is perpendicular to another cos =1}\\
+  &=\frac{d^2 \Phi cos(\theta )}{dA 1 d\omega }\\
+  \text{Assume $dA =1$, then }dw = 4\pi r^2 \\
+  &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2}\\
+  \text{The radius is given by }r=\sqrt{r^2+d^2}\\
+  &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2+d^2 }\\
+\end{align*}
 
 
 \section*{4.2 Analytical solution of the rendering equation in 2D}
+  \subsection*{a)}
+    \begin{align*}
+      L(x,\omega_o)
+      &=L_e(x,\omega_o) + \int_{0}^\pi f_r(\omega_i, x, \omega_o) L(x,\omega_i)cos(\theta_i)d\omega_i\\
+      &=0 + \int_{0}^\pi \frac{1}{2} L(x,\omega_i)cos(\theta_i)d\omega_i\\
+      &=\frac{1}{2}\int_{0}^\pi L(x,\omega_i)cos(\theta_i)d\omega_i\\
+      &=\frac{1}{2}\int_{0}^\pi L(x,\omega_i)cos(\theta_i)d\omega_i\\
+      &=\frac{1}{2}(\int_{0}^{tan^{-1}(\frac{1}{p+1 })} L(x,\omega_i)cos(\theta_i)d\omega_i + \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} L(x,\omega_i)cos(\theta_i)d\omega_i + \int_{\pi-tan^{-1}(\frac{1}{1-p})}^{\pi} L(x,\omega_i)cos(\theta_i)d\omega_i)\\
+      &\text{The first and the third integral refer to incident angles that point past the light source, therefore they are 0}\\
+      &=\frac{1}{2} \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} 1\cdot cos(\theta_i)d\omega_i\\
+      &=\frac{1}{2} \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} cos(\lvert \omega_i - \frac{\pi}{2} \rvert)d\omega_i \\
+      &=\frac{1}{2} \left( \int_{tan^{-1}(\frac{1}{p+1 })}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega_i )d\omega_i +  \int_{\frac{\pi}{2}}^{\pi-tan^{-1}(\frac{1}{1-p})}cos(\omega_i - \frac{\pi}{2} )d\omega_i\right)\\
+    \end{align*}
 
 
 \section*{4.3 Simple Path Tracer}
