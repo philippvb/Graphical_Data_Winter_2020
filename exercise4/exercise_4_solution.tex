@@ -62,6 +62,18 @@
 
 
 \section*{4.1 Radiometry}
+  \subsection*{a)}
+    As the point light source emits $\Phi_S$ Watts in every direction, its
+    radiance is $L_o(d,\omega)=\frac{\Phi_S}{4\pi}$ in every direction. Because it is
+    the only light source in the scene which emits light to $x$ from the
+    direction $\omega_i$, the integral for the irradiance of x $I_x=\int_\omega
+    L(x,w)cos(\theta )d \omega$ collapses to $I_x=L_o(d, \omega_i)cos(\theta )$. This would
+    assume however that the light source sits on the unit circle around $x$.
+    Therefore, we have to normalize by the distance between $d$ and $x$, resulting in 
+    $I_x=\frac{L_o(d, \omega_i)cos(\theta )}{\lvert x-d \rvert}=\frac{L_o(d,
+    \omega_i)cos(\theta )}{r^2+d^2}=\frac{\Phi_S cos(\theta )}{4\pi (r^2+d^2)}$\\
+
+
 Let $w'$ be the direction from x to d
 \begin{align*}
   E
