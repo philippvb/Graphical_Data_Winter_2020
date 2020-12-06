@@ -153,7 +153,8 @@ power is radiated up while the other half is radiated down. For an infinite plan
       &=\frac{1}{2} \int_{\phi_{lower}}^{\phi_{upper}} cos(\lvert \omega - \frac{\pi}{2} \rvert)d\omega \\
       &=\frac{1}{2} \left( \int_{\frac{\pi}{2} - tan^{-1}(p+1)}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega )d\omega +  \int_{\frac{\pi}{2}}^{\frac{\pi}{2} + tan^{-1}(1-p)}cos(\omega - \frac{\pi}{2} )d\omega\right)\\
       &= \frac{1}{2}\left(\cos \left(\frac{\pi }{2}-\arctan \left(p+1\right)\right)-\cos \left(\arctan \left(-p+1\right)+\frac{\pi }{2}\right)\right) \\
-      &= \frac{1}{2}\left( \frac{1-p}{\sqrt{(p-2)p + 2}} + \frac{p+1}{\sqrt{p(p+2) + 2}} \right)
+      &= \frac{1}{2}\left( \frac{1-p}{\sqrt{(p-2)p + 2}} + \frac{p+1}{\sqrt{p(p+2) + 2}} \right) \\
+      &= L((p,0), w_o)
     \end{align*}
 
     % for authomatic derivation see
@@ -172,16 +173,18 @@ power is radiated up while the other half is radiated down. For an infinite plan
   & \text{If we are not in a light source this is: } \\
   &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\lvert x - y \rvert} \cdot d y_x \\
   &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot L(y, -\omega_i(x,y)) \cdot \frac{\cos \phi_i \cos \phi_y}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} \cdot d y_x \\
-  &= \int_{-1}^{1} f_r(\omega_i, x, \omega_o) \cdot 1 \cdot \frac{\cos \phi_i \cos \phi_y}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} \cdot d y_x \\
-  &= 
 \end{align*}
 
+The only material in the scene is the Lambertian meterial at $y=0$ with $f_r(\omega_i, (p,0), w_o) = \frac{1}{2}$. The light source has uniforma radiance of 1 for each point and direction. So:
+\begin{align*}
+  &= \int_{-1}^{1} \frac{1}{2} \cdot 1 \cdot \frac{\cos \phi_i \cos \phi_y}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} \cdot d y_x \\
+\end{align*}
 
 From inspection, for this specific case for the angles $\phi_i$ and $\phi_y$ it holds $\phi_i = \phi_y$ (Since the area light and the ground line are parallel). 
-Furthermore it holds: $tan(\phi_i) = \frac{\lvert y_x - x_x \rvert}{1} = \lvert y_x - x_x \rvert$  
+Furthermore it holds: $tan(\phi_i) = \frac{\lvert y_x - x_x \rvert}{1} = \lvert y_x - x_x \rvert$. Therefore:
 
 \begin{align*}
-  \frac{1}{2} \int_{-1}^{1} \frac{cos(\tan^{-1}(\lvert y_x - x_x \rvert))^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x
+  &= \frac{1}{2} \int_{-1}^{1} \frac{cos(\tan^{-1}(\lvert y_x - x_x \rvert))^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x
 \end{align*}
 
 With $cos(tan^{-1}(x) = \frac{1}{\sqrt{1 + x^2}})$ we get:
@@ -191,10 +194,33 @@ With $cos(tan^{-1}(x) = \frac{1}{\sqrt{1 + x^2}})$ we get:
   &= \frac{1}{2} \int_{-1}^{1} \frac{\left(\frac{1}{\sqrt{1 + ( y_x - x_x )^2}}\right)^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x \\
   &= \frac{1}{2} \int_{-1}^{1} \frac{\frac{1}{1 + ( y_x - x_x )^2}}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x \\
   &= \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}) \cdot (1 + ( y_x - x_x )^2)} d y_x \\
-  &= 
+\end{align*}
+by replacing $x_x := p$, $x_y = 0, y_y=1$ and $y_y:=t$ wet get
+\begin{align*}
+  &= \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(p - y_x)^2 + (0 - 1)^2}) \cdot (1 + ( y_x - p)^2)} d y_x \\
+  &= \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(p - y_x)^2 + 1}) \cdot (1 + ( y_x - p)^2)} d y_x \\
+  &= \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} d t \\
 \end{align*}
 
 
+Automatic integration shows that
+\begin{align*}
+  \int \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} dt = \frac{t-p}{\sqrt{p^2 - pt + t^2 + 1}} + C
+\end{align*}
+% https://www.wolframalpha.com/input/?i=%5Cfrac%7B1%7D%7B%28%5Csqrt%7B%28p+-+t%29%5E2+%2B+1%7D%29+%5Ccdot+%281+%2B+%28+t-+p%29%5E2%29%7D+d+t
+
+so
+
+\begin{align*}
+  \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} d t 
+  &= \frac{1}{2}\left[ \frac{t-p}{\sqrt{p^2 - pt + t^2 + 1}} \right]_{-1}^{1} \\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 1 p + 1^2 + 1}} -  \frac{(-1)-p}{\sqrt{p^2 - p (-1) + (-1)^2 + 1}} \right)\\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 1 p + 1^2 + 1}} + \frac{1+p}{\sqrt{p^2 - p (-1) + (-1)^2 + 1}} \right)\\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - p + 2}} + \frac{1+p}{\sqrt{p^2 + p + 2}} \right)\\
+  &= L((p,0), w_o)
+\end{align*}
+% This seems mostly correct, but i lost a -2p and +2p somewhere, when compared to the solution of a.
+% or it is wrong in a)
 
 \section*{4.3 Simple Path Tracer}
 
