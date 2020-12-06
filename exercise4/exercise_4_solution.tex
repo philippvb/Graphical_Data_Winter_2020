@@ -104,18 +104,41 @@ $\omega = (\theta, \phi)$
   \subsection*{a)}
     \begin{align*}
       L(x,\omega_o)
-      &=L_e(x,\omega_o) + \int_{0}^\pi f_r(\omega_i, x, \omega_o) L(x,\omega_i)cos(\theta_i)d\omega_i\\
-      &=0 + \int_{0}^\pi \frac{1}{2} L(x,\omega_i)cos(\theta_i)d\omega_i\\
-      &=\frac{1}{2}\int_{0}^\pi L(x,\omega_i)cos(\theta_i)d\omega_i\\
-      &=\frac{1}{2}\int_{0}^\pi L(x,\omega_i)cos(\theta_i)d\omega_i\\
-      &=\frac{1}{2}(\int_{0}^{tan^{-1}(\frac{1}{p+1 })} L(x,\omega_i)cos(\theta_i)d\omega_i + \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} L(x,\omega_i)cos(\theta_i)d\omega_i + \int_{\pi-tan^{-1}(\frac{1}{1-p})}^{\pi} L(x,\omega_i)cos(\theta_i)d\omega_i)\\
-      &\text{The first and the third integral refer to incident angles that point past the light source, therefore they are 0}\\
-      &=\frac{1}{2} \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} 1\cdot cos(\theta_i)d\omega_i\\
-      &=\frac{1}{2} \int_{tan^{-1}(\frac{1}{p+1 })}^{\pi-tan^{-1}(\frac{1}{1-p})} cos(\lvert \omega_i - \frac{\pi}{2} \rvert)d\omega_i \\
-      &=\frac{1}{2} \left( \int_{tan^{-1}(\frac{1}{p+1 })}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega_i )d\omega_i +  \int_{\frac{\pi}{2}}^{\pi-tan^{-1}(\frac{1}{1-p})}cos(\omega_i - \frac{\pi}{2} )d\omega_i\right)\\
+      &=L_e(x,\omega_o) + \int_{0}^\pi f_r(\omega, x, \omega_o) L(x,\omega)cos(\phi)d\omega\\
+      &=0 + \int_{0}^\pi \frac{1}{2} L(x,\omega)cos(\phi)d\omega\\
+      &=\frac{1}{2}\int_{0}^\pi L(x,\omega)cos(\phi)d\omega\\
+      &=\frac{1}{2}\int_{0}^\pi L(x,\omega)cos(\phi)d\omega\\
+    \end{align*}
+    We want to find  the first angle, that hits the area light and the last angle that hits the area light. Trigonometric examination shows that those angles can be calculated with 
+    \begin{align*}
+      \phi_{lower} = \frac{\pi}{2} - tan^{-1}(p + 1) \\
+      \phi_{upper} = \frac{\pi}{2} + tan^{-1}(1-p)
+    \end{align*}
+    This can be seen when examining that the triangle that is formed from the top left point of the lightsource (-1, 1) with (p, 0) and (-1, 0) has an angle $\alpha'$ at (-1,1) with $\frac{p - (-1)}{1} = tan(\alpha')$. 
+    Since a tringle has a total inner angle of $\pi$ and it has a right angle at (-1, 0), the angle $\alpha$ at (p, 0) with $\alpha = \pi - \frac{\pi}{2} - \alpha' = \frac{\pi}{2} - tan^{-1}(p+1)$. This $\alpha$ is the desired angle 
+    $\phi_{lower}$. Note that this even holds for $p < -1$. In a similar way $\phi_{upper}$ is found. 
+    Examine the triangle ((p,0), (1,0), (1,1)). The angle $\alpha_2'$ at (1,1) has $tan(\alpha_2') = \frac{1-p}{1}$. Therefore the angle $\alpha_2$  at (p, 0) is $\alpha_2 = \pi - \frac{\pi}{2} - tan^{-1}(1-p) = \frac{\pi}{2} - tan^{-1}(1-p)$
+    The desired angle $\phi_{upper}$ is the remaining part of the half circle with $\phi_{upper} = \pi - (\frac{\pi}{2} - tan^{-1}(1-p)) = \frac{\pi}{2} + tan^{-1}(1-p)$.
+
+    \begin{align*}
+      &=\frac{1}{2}(\int_{0}^{\phi_{lower}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{lower}}^{\phi_{upper}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{upper}}^{\pi} L(x,\omega)cos(\phi)d\omega)\\
+      &\text{The first and the third integral refer to incident angles that point past the light source, } \\
+      &\text{therefore they are 0. The second integral refers to incident angles pointing to the } \\
+      &\text{lightsource, where } L(x,\omega) = 1\\
+      &=\frac{1}{2} \int_{\phi_{lower}}^{\phi_{upper}} 1\cdot cos(\phi)d\omega\\
+      &=\frac{1}{2} \int_{\phi_{lower}}^{\phi_{upper}} cos(\lvert \omega - \frac{\pi}{2} \rvert)d\omega \\
+      &=\frac{1}{2} \left( \int_{\frac{\pi}{2} - tan^{-1}(p+1)}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega )d\omega +  \int_{\frac{\pi}{2}}^{\frac{\pi}{2} + tan^{-1}(1-p)}cos(\omega - \frac{\pi}{2} )d\omega\right)\\
+      &= \frac{1}{2}\left(\cos \left(\frac{\pi }{2}-\arctan \left(p+1\right)\right)-\cos \left(\arctan \left(-p+1\right)+\frac{\pi }{2}\right)\right) \\
+      &= \frac{1}{2}\left( \frac{1-p}{\sqrt{(p-2)p + 2}} + \frac{p+1}{\sqrt{p(p+2) + 2}} \right)
     \end{align*}
 
+    % for authomatic derivation see
+    % https://www.symbolab.com/solver/step-by-step/%5Cfrac%7B1%7D%7B2%7D%20%5Cleft(%20%5Cint_%7B%5Cfrac%7B%5Cpi%7D%7B2%7D%20-%20tan%5E%7B-1%7D%5Cleft(p%2B1%5Cright)%7D%5E%7B%5Cfrac%7B%5Cpi%7D%7B2%7D%7D%20cos%5Cleft(%5Cfrac%7B%5Cpi%7D%7B2%7D%20-%20%5Comega%20%5Cright)d%5Comega%20%2B%20%20%5Cint_%7B%5Cfrac%7B%5Cpi%7D%7B2%7D%7D%5E%7B%5Cfrac%7B%5Cpi%7D%7B2%7D%20%2B%20tan%5E%7B-1%7D%5Cleft(1-p%5Cright)%7Dcos%5Cleft(%5Comega%20-%20%5Cfrac%7B%5Cpi%7D%7B2%7D%20%5Cright)d%5Comega%5Cright)
+    % and
+    % https://www.wolframalpha.com/input/?i=%5Cfrac%7B1%7D%7B2%7D%5Cleft%28%5Ccos+%5Cleft%28%5Cfrac%7B%5Cpi+%7D%7B2%7D-%5Carctan+%5Cleft%28p%2B1%5Cright%29%5Cright%29-%5Ccos+%5Cleft%28%5Carctan+%5Cleft%28-p%2B1%5Cright%29%2B%5Cfrac%7B%5Cpi+%7D%7B2%7D%5Cright%29%5Cright%29
 
+    % The Graph also seems to show a correct distribution of light!
+  
 
 \subsection*{b)}
 
