@@ -88,6 +88,7 @@ Let $w'$ be the direction from x to d
   &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2+d^2 }\\
 \end{align*}
 
+
 \subsection*{a)}
 $\omega = (\theta, \phi)$
 \begin{align*}
@@ -99,6 +100,28 @@ $\omega = (\theta, \phi)$
   &= \\
   &= \frac{\Phi_S \cos(\theta)}{4 \pi(r^2 + d^2)}
 \end{align*}
+
+
+
+\subsection*{b)}
+\begin{align*}
+  \Phi_E &= \int_{0}^{2\pi} \int_{0}^{\infty} I(r)r\ dr\ d\phi \\
+  &= \int_{0}^{2\pi} \int_{0}^{\infty} \frac{\Phi_S \cos(\theta)}{4\pi(r^2 + d^2)} r\ dr\ d\phi \\
+  &= \int_{0}^{2\pi} \int_{0}^{\infty} \frac{\Phi_S \frac{d}{\sqrt{d^2 + r^2}}}{4\pi(r^2 + d^2)} r\ dr\ d\phi \\
+  &= \Phi_S \int_{0}^{2\pi} \int_{0}^{\infty} \frac{\frac{d}{\sqrt{d^2 + r^2}}}{4\pi(r^2 + d^2)} r\ dr\ d\phi \\
+  &= \Phi_S \int_{0}^{2\pi} \int_{0}^{\infty} \frac{d\sqrt{d^2+r^2}}{4\pi \left(r^2+d^2\right)^2} r\ dr\ d\phi \\
+  &= \Phi_S \int_{0}^{2\pi} \frac{d}{4\pi \sqrt{d^2}}\ d\phi \\
+  &= \Phi_S \int_{0}^{2\pi} \frac{1}{4\pi}\ d\phi \\
+  &= \Phi_S \frac{1}{2} \\
+  &= \frac{1}{2} \Phi_S \\
+  &= 50 W
+\end{align*}
+% See automatic derivation at 
+% https://www.symbolab.com/solver/step-by-step/%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7Bd%5Csqrt%7Bd%5E%7B2%7D%2Br%5E%7B2%7D%7D%7D%7B4%5Cpi%20%5Cleft(r%5E%7B2%7D%2Bd%5E%7B2%7D%5Cright)%5E%7B2%7D%7D%20r%20dr
+
+So the total radiant power $\Phi_E$ received by $E$ is half of the power of the point light source. Intuitively this could seem much, but it is actually quite reasonable, since exactly half of the light sources 
+power is radiated up while the other half is radiated down. For an infinite plane $E$ all of the power that is emitted downwards is received by the plane, which again is half of the light sources radiant power. 
+
 
 \section*{4.2 Analytical solution of the rendering equation in 2D}
   \subsection*{a)}
@@ -120,6 +143,7 @@ $\omega = (\theta, \phi)$
     Examine the triangle ((p,0), (1,0), (1,1)). The angle $\alpha_2'$ at (1,1) has $tan(\alpha_2') = \frac{1-p}{1}$. Therefore the angle $\alpha_2$  at (p, 0) is $\alpha_2 = \pi - \frac{\pi}{2} - tan^{-1}(1-p) = \frac{\pi}{2} - tan^{-1}(1-p)$
     The desired angle $\phi_{upper}$ is the remaining part of the half circle with $\phi_{upper} = \pi - (\frac{\pi}{2} - tan^{-1}(1-p)) = \frac{\pi}{2} + tan^{-1}(1-p)$.
 
+    $ \frac{1}{2}\int_{0}^\pi L(x,\omega)cos(\phi)d\omega$ therefore can be split into 
     \begin{align*}
       &=\frac{1}{2}(\int_{0}^{\phi_{lower}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{lower}}^{\phi_{upper}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{upper}}^{\pi} L(x,\omega)cos(\phi)d\omega)\\
       &\text{The first and the third integral refer to incident angles that point past the light source, } \\
