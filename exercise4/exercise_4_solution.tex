@@ -177,6 +177,25 @@ power is radiated up while the other half is radiated down. For an infinite plan
 \end{align*}
 
 
+From inspection, for this specific case for the angles $\phi_i$ and $\phi_y$ it holds $\phi_i = \phi_y$ (Since the area light and the ground line are parallel). 
+Furthermore it holds: $tan(\phi_i) = \frac{\lvert y_x - x_x \rvert}{1} = \lvert y_x - x_x \rvert$  
+
+\begin{align*}
+  \frac{1}{2} \int_{-1}^{1} \frac{cos(\tan^{-1}(\lvert y_x - x_x \rvert))^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x
+\end{align*}
+
+With $cos(tan^{-1}(x) = \frac{1}{\sqrt{1 + x^2}})$ we get:
+
+\begin{align*}
+  &= \frac{1}{2} \int_{-1}^{1} \frac{\left(\frac{1}{\sqrt{1 + (\lvert y_x - x_x \rvert)^2}}\right)^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x \\
+  &= \frac{1}{2} \int_{-1}^{1} \frac{\left(\frac{1}{\sqrt{1 + ( y_x - x_x )^2}}\right)^2}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x \\
+  &= \frac{1}{2} \int_{-1}^{1} \frac{\frac{1}{1 + ( y_x - x_x )^2}}{\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}} d y_x \\
+  &= \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(x_x - y_x)^2 + (x_y - y_y)^2}) \cdot (1 + ( y_x - x_x )^2)} d y_x \\
+  &= 
+\end{align*}
+
+
+
 \section*{4.3 Simple Path Tracer}
 
 
