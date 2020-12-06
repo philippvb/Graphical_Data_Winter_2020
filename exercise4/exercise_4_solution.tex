@@ -74,32 +74,32 @@
     \omega_i)cos(\theta )}{r^2+d^2}=\frac{\Phi_S cos(\theta )}{4\pi (r^2+d^2)}$\\
 
 
-Let $w'$ be the direction from x to d
-\begin{align*}
-  E
-  &=\int_\omega L(x,w)cos(\theta )d \omega\\
-  &=L(x,w')cos(\theta )\\
-  &=\frac{d^2 \Phi cos(\theta )}{dA cos(\theta )d\omega }\\
-  \text{as a point is perpendicular to another cos =1}\\
-  &=\frac{d^2 \Phi cos(\theta )}{dA 1 d\omega }\\
-  \text{Assume $dA =1$, then }dw = 4\pi r^2 \\
-  &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2}\\
-  \text{The radius is given by }r=\sqrt{r^2+d^2}\\
-  &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2+d^2 }\\
-\end{align*}
+% Let $w'$ be the direction from x to d
+% \begin{align*}
+%   E
+%   &=\int_\omega L(x,w)cos(\theta )d \omega\\
+%   &=L(x,w')cos(\theta )\\
+%   &=\frac{d^2 \Phi cos(\theta )}{dA cos(\theta )d\omega }\\
+%   \text{as a point is perpendicular to another cos =1}\\
+%   &=\frac{d^2 \Phi cos(\theta )}{dA 1 d\omega }\\
+%   \text{Assume $dA =1$, then }dw = 4\pi r^2 \\
+%   &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2}\\
+%   \text{The radius is given by }r=\sqrt{r^2+d^2}\\
+%   &=\frac{d^2 \Phi cos(\theta )}{4\pi r^2+d^2 }\\
+% \end{align*}
 
 
-\subsection*{a)}
-$\omega = (\theta, \phi)$
-\begin{align*}
-  E &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} L(x, \omega) \cos \theta \sin \theta d \theta d \phi \\
-  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{dA \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
-  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{\sin(\theta) d \theta d \phi \cdot r^2 \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
-  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \omega} \\
-  &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \theta d \phi} \\
-  &= \\
-  &= \frac{\Phi_S \cos(\theta)}{4 \pi(r^2 + d^2)}
-\end{align*}
+% \subsection*{a)}
+% $\omega = (\theta, \phi)$
+% \begin{align*}
+%   E &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} L(x, \omega) \cos \theta \sin \theta d \theta d \phi \\
+%   &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{dA \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
+%   &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{\sin(\theta) d \theta d \phi \cdot r^2 \cos(\theta) d\omega} \cos \theta \sin \theta d \theta d \phi \\
+%   &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \omega} \\
+%   &= \int_{0}^{2\pi} \int_0^{\frac{\pi}{2}} \frac{d^2 \Phi}{r^2 d \theta d \phi} \\
+%   &= \\
+%   &= \frac{\Phi_S \cos(\theta)}{4 \pi(r^2 + d^2)}
+% \end{align*}
 
 
 
@@ -146,14 +146,18 @@ power is radiated up while the other half is radiated down. For an infinite plan
     $ \frac{1}{2}\int_{0}^\pi L(x,\omega)cos(\phi)d\omega$ therefore can be split into 
     \begin{align*}
       &=\frac{1}{2}(\int_{0}^{\phi_{lower}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{lower}}^{\phi_{upper}} L(x,\omega)cos(\phi)d\omega + \int_{\phi_{upper}}^{\pi} L(x,\omega)cos(\phi)d\omega)\\
-      &\text{The first and the third integral refer to incident angles that point past the light source, } \\
-      &\text{therefore they are 0. The second integral refers to incident angles pointing to the } \\
-      &\text{lightsource, where } L(x,\omega) = 1\\
+    \end{align*}
+    
+    The first and the third integral refer to incident angles that point past the light source, 
+    therefore they are 0. The second integral refers to incident angles pointing to the lightsource, where $L(x,\omega) = 1$
+    
+    \begin{align*}
       &=\frac{1}{2} \int_{\phi_{lower}}^{\phi_{upper}} 1\cdot cos(\phi)d\omega\\
       &=\frac{1}{2} \int_{\phi_{lower}}^{\phi_{upper}} cos(\lvert \omega - \frac{\pi}{2} \rvert)d\omega \\
-      &=\frac{1}{2} \left( \int_{\frac{\pi}{2} - tan^{-1}(p+1)}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega )d\omega +  \int_{\frac{\pi}{2}}^{\frac{\pi}{2} + tan^{-1}(1-p)}cos(\omega - \frac{\pi}{2} )d\omega\right)\\
-      &= \frac{1}{2}\left(\cos \left(\frac{\pi }{2}-\arctan \left(p+1\right)\right)-\cos \left(\arctan \left(-p+1\right)+\frac{\pi }{2}\right)\right) \\
-      &= \frac{1}{2}\left( \frac{1-p}{\sqrt{(p-2)p + 2}} + \frac{p+1}{\sqrt{p(p+2) + 2}} \right) \\
+      &= \frac{1}{2} \left( \int_{\frac{\pi}{2} - tan^{-1}(p+1)}^{\frac{\pi}{2}} cos(\frac{\pi}{2} - \omega )d\omega +  \int_{\frac{\pi}{2}}^{\frac{\pi}{2} + tan^{-1}(1-p)}cos(\omega - \frac{\pi}{2} )d\omega\right)\\
+      &= \frac{1}{2}\left(\cos \left(\frac{\pi }{2}-\tan^{-1} \left(p+1\right)\right)-\cos \left(\tan^{-1} \left(-p+1\right)+\frac{\pi }{2}\right)\right) \\
+      &= \frac{1}{2}\left( \frac{1-p}{\sqrt{(1-p)^2 + 1}} + \frac{p+1}{\sqrt{(p+1)^2 + 1}} \right) \\
+      &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 2p + 2}} + \frac{1+p}{\sqrt{p^2 + 2p + 2}} \right) \\
       &= L((p,0), w_o)
     \end{align*}
 
@@ -205,7 +209,7 @@ by replacing $x_x := p$, $x_y = 0, y_y=1$ and $y_y:=t$ wet get
 
 Automatic integration shows that
 \begin{align*}
-  \int \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} dt = \frac{t-p}{\sqrt{p^2 - pt + t^2 + 1}} + C
+  \int \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} dt = \frac{t-p}{\sqrt{p^2 - 2pt + t^2 + 1}} + C
 \end{align*}
 % https://www.wolframalpha.com/input/?i=%5Cfrac%7B1%7D%7B%28%5Csqrt%7B%28p+-+t%29%5E2+%2B+1%7D%29+%5Ccdot+%281+%2B+%28+t-+p%29%5E2%29%7D+d+t
 
@@ -213,10 +217,10 @@ so
 
 \begin{align*}
   \frac{1}{2} \int_{-1}^{1} \frac{1}{(\sqrt{(p - t)^2 + 1}) \cdot (1 + ( t- p)^2)} d t 
-  &= \frac{1}{2}\left[ \frac{t-p}{\sqrt{p^2 - pt + t^2 + 1}} \right]_{-1}^{1} \\
-  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 1 p + 1^2 + 1}} -  \frac{(-1)-p}{\sqrt{p^2 - p (-1) + (-1)^2 + 1}} \right)\\
-  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 1 p + 1^2 + 1}} + \frac{1+p}{\sqrt{p^2 - p (-1) + (-1)^2 + 1}} \right)\\
-  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - p + 2}} + \frac{1+p}{\sqrt{p^2 + p + 2}} \right)\\
+  &= \frac{1}{2}\left[ \frac{t-p}{\sqrt{p^2 - 2pt + t^2 + 1}} \right]_{-1}^{1} \\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 2 p + 1^2 + 1}} -  \frac{(-1)-p}{\sqrt{p^2 - 2p (-1) + (-1)^2 + 1}} \right)\\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 2 p + 1^2 + 1}} + \frac{1+p}{\sqrt{p^2 - 2 p (-1) + (-1)^2 + 1}} \right)\\
+  &= \frac{1}{2} \left( \frac{1-p}{\sqrt{p^2 - 2p + 2}} + \frac{1+p}{\sqrt{p^2 + 2p + 2}} \right)\\
   &= L((p,0), w_o)
 \end{align*}
 % This seems mostly correct, but i lost a -2p and +2p somewhere, when compared to the solution of a.
