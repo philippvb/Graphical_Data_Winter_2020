@@ -42,8 +42,7 @@ struct Texture
 		assert(level >= 0 && level < MipLevels);
 
 		// TODO 5.4 a) Calculate a mip level's width given the level.
-
-		return ResX;
+		return (int) ResX / pow(2, level);
 	}
 
 	/**
@@ -54,12 +53,12 @@ struct Texture
 	 */
 	inline int MipResY(int level)
 	{
+
 		// Assures precondition in debug mode.
 		assert(level >= 0 && level < MipLevels);
 
 		// TODO 5.4 a) Calculate a mip level's height given the level.
-
-		return ResY;
+		return (int) ResY / pow(2, level);
 	}
 
 	/**
@@ -72,12 +71,36 @@ struct Texture
 			ResX(ResX), ResY(ResY)
 	{
 		// TODO 5.4 b) Calculate the amount of mip levels necessary to have 1x1 texel on the smallest level.
-		MipLevels = 1;
+		int larger_side = max(ResX, ResY);
+		MipLevels = (int) log2(larger_side) + 1;
 
 		data = new Vec3*[MipLevels];
 		data[0] = nData;
 
+		// data[l][y*mipWidth+x] contains the color of the sample at texel (x, y) of mip level l.
 		// TODO 5.4 b) Calculate all mip levels.
+		for (int level = 1; level < MipLevels; level++){
+
+			int ResX_level = MipResX(level);
+			int ResY_level = MipResY(level);
+
+			Vec3 *level_data = new Vec3[ResX_level * ResY_level];
+			data[level] = level_data;
+
+			for (int x=0; x < ResX_level; x++){
+				for (int y=0; y < ResY_level; y++){
+					data[level][y*ResY_level+x] =
+							(data[level-1][(y*2) * MipResY(level-1) + (x*2)] +
+							data[level-1][(y*2 + 1) * MipResY(level-1) + (x*2)] +
+							data[level-1][(y*2) * MipResY(level-1) + (x*2 + 1)] +
+							data[level-1][(y*2 + 1) * MipResY(level-1) + (x*2 + 1)])
+							/ 4;
+
+				}
+			}
+
+		}
+
 	}
 
 	/**
@@ -122,8 +145,18 @@ struct Texture
 	Vec3 GetMipmappedColor(Vec2 coords, int level)
 	{
 		// TODO 5.4 c) Return the sample at coords from the given level (from data[level] instead of data[0])
+		// Check if level is > MipLevels or < 0:
+		int ceiled_level = level > MipLevels - 1 ? MipLevels - 1 : level;
+		ceiled_level = ceiled_level < 0 ? 0 : ceiled_level;
 
-		return GetColor(coords);
+		std::cout << "level: " << ceiled_level << std::endl;
+
+
+
+		int x = (int) MipResX(ceiled_level) * coords.x;
+		int y = (int) MipResY(ceiled_level) * coords.y;
+
+		return data[ceiled_level][y*MipResY(ceiled_level)+x];
 	}
 
 	/**

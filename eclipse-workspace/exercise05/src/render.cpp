@@ -65,8 +65,12 @@ void Render::render(int shader)
 
 			// TODO 5.4 e) Remove the random pixel sampling to have only one sample per pixel.
 
-			Ray ray = cam->getRay((float) x + mtrand[thread]->rand(),
-					(float) y + mtrand[thread]->rand());
+//			Ray ray = cam->getRay((float) x + mtrand[thread]->rand(),
+//					(float) y + mtrand[thread]->rand());
+
+			Ray ray = cam->getRay((float) x, (float) y);
+
+
 			HitRec rec = accel->intersect(ray);
 
 			Vec3 color(0.0f, 0.0f, 0.0f);
@@ -106,11 +110,13 @@ void Render::render(int shader)
 	}
 }
 
+
+# define MIP_DISTANCE_CONSTANT 0.02
 float Render::getMipLevel(float distance)
 {
 	// TODO 5.4 d) Calculate the mip level from the given distance and use the result for the getTextureColor(...) calls.
-
-	return 0.0f;
+	//return log2(distance * MIP_DISTANCE_CONSTANT);
+	return distance * MIP_DISTANCE_CONSTANT;
 }
 
 Vec3 Render::shade_debug_normal(Ray &ray, HitRec &rec)
@@ -131,33 +137,45 @@ Vec3 Render::shade_debug_miplevel(Ray &ray, HitRec &rec)
 	int level = (int)getMipLevel(rec.dist);
 
 	Vec3 color(0.0f);
-	color[level % 3] = 1.0f;
+	color[1] = 1.0f / (level + 1);
 
 	return color;
 }
+
+
 
 Vec3 Render::shade_noshading(Ray &ray, HitRec &rec)
 {
 	Vec3 color(scene->material[scene->mat_index[rec.id]].color_d);
 
 	// TODO 5.3 b) Multiply color with the texture color by calling Material::getTextureColor(coords).
+	Vec2 coords = scene->getTextureCoordinates(ray, rec.id);
+
+	// TODO 5.4 d) Add the second parameter to Material::getTextureColor(...).
+	Vec3 tex_color = scene->material->GetTextureColor(coords, getMipLevel(rec.dist));
+
+	return Vec3::product(color, tex_color);
 
 	// TODO 5.4 d) Add the second parameter to Material::getTextureColor(...).
 
-	return color;
 }
 
 Vec3 Render::shade_simple(Ray &ray, HitRec &rec)
 {
 	Vec3 normal = scene->getShadingNormal(ray, rec.id);
 	float cos = fabsf(normal * ray.dir);
-	Vec3 color = cos * scene->material[scene->mat_index[rec.id]].color_d;
+	Vec3 color = cos;// * scene->material[scene->mat_index[rec.id]].color_d;
 
 	// TODO 5.3 b) Multiply color with the texture color by calling Material::getTextureColor(coords).
+	Vec2 coords = scene->getTextureCoordinates(ray, rec.id);
+
+	// TODO 5.4 d) Add the second parameter to Material::getTextureColor(...).
+	Vec3 tex_color = scene->material->GetTextureColor(coords, getMipLevel(rec.dist));
+
+	return Vec3::product(color, tex_color);
 
 	// TODO 5.4 d) Add the second parameter to Material::getTextureColor(...).
 
-	return color;
 }
 
 Vec3 Render::shade_path(Ray &ray, HitRec &rec, int depth, int thread)
@@ -184,8 +202,12 @@ Vec3 Render::shade_path(Ray &ray, HitRec &rec, int depth, int thread)
 	Vec3 color = mat.color_d;
 
 	// TODO 5.3 b) Multiply color with the texture color by calling Material::getTextureColor(coords).
+	Vec2 coords = scene->getTextureCoordinates(ray, rec.id);
 
 	// TODO 5.4 d) Add the second parameter to Material::getTextureColor(...).
+	Vec3 tex_color = scene->material->GetTextureColor(coords, getMipLevel(rec.dist));
+	color = Vec3::product(color, tex_color);
+
 
 	HitRec newRec = accel->intersect(newRay);
 	if (newRec.id == -1)

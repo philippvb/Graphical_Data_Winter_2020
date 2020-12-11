@@ -19,7 +19,7 @@ Render *render;
 Cam *cam;
 
 /// Currently selected shader
-int shader = 0;
+int shader = 6;
 
 #ifdef INTERACTIVE
 #include <SDL/SDL.h>

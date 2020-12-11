@@ -108,8 +108,13 @@ inline Vec3 Scene::getShadingNormal(const Ray &ray, const int tri_id) const
 inline Vec2 Scene::getTextureCoordinates(const Ray &ray, const int tri_id) const
 {
 	// TODO 5.3 a) Interpolate the uv-coordinates.
-
-	return Vec2(0.0f, 0.0f);
+	float alpha, beta, gamma;
+	triangles[tri_id].getBarycentric(ray, alpha, beta);
+	gamma = 1.0f - alpha - beta;
+	Vec2 n = gamma * uv[tri_id * 3] + alpha * uv[tri_id * 3 + 1]
+				+ beta * uv[tri_id * 3 + 2];
+	// n.normalize();
+	return n;
 }
 
 inline float sign(float a)
