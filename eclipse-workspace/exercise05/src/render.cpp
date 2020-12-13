@@ -111,12 +111,12 @@ void Render::render(int shader)
 }
 
 
-# define MIP_DISTANCE_CONSTANT 0.02
+# define MIP_DISTANCE_CONSTANT 0.025
 float Render::getMipLevel(float distance)
 {
 	// TODO 5.4 d) Calculate the mip level from the given distance and use the result for the getTextureColor(...) calls.
-	//return log2(distance * MIP_DISTANCE_CONSTANT);
-	return distance * MIP_DISTANCE_CONSTANT;
+	return log2(distance * MIP_DISTANCE_CONSTANT);
+//	return 0;
 }
 
 Vec3 Render::shade_debug_normal(Ray &ray, HitRec &rec)
@@ -137,11 +137,10 @@ Vec3 Render::shade_debug_miplevel(Ray &ray, HitRec &rec)
 	int level = (int)getMipLevel(rec.dist);
 
 	Vec3 color(0.0f);
-	color[1] = 1.0f / (level + 1);
+	color[level % 3] = 1.0f;
 
 	return color;
 }
-
 
 
 Vec3 Render::shade_noshading(Ray &ray, HitRec &rec)

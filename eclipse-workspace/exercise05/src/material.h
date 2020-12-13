@@ -85,22 +85,21 @@ struct Texture
 			int ResY_level = MipResY(level);
 
 			Vec3 *level_data = new Vec3[ResX_level * ResY_level];
+
 			data[level] = level_data;
 
 			for (int x=0; x < ResX_level; x++){
 				for (int y=0; y < ResY_level; y++){
-					data[level][y*ResY_level+x] =
-							(data[level-1][(y*2) * MipResY(level-1) + (x*2)] +
-							data[level-1][(y*2 + 1) * MipResY(level-1) + (x*2)] +
-							data[level-1][(y*2) * MipResY(level-1) + (x*2 + 1)] +
-							data[level-1][(y*2 + 1) * MipResY(level-1) + (x*2 + 1)])
+					data[level][y*ResX_level+x] =
+							(data[level-1][(y*2) * MipResX(level-1) + (x*2)] +
+							data[level-1][(y*2 + 1) * MipResX(level-1) + (x*2)] +
+							data[level-1][(y*2) * MipResX(level-1) + (x*2 + 1)] +
+							data[level-1][(y*2 + 1) * MipResX(level-1) + (x*2 + 1)])
 							/ 4;
 
 				}
 			}
-
 		}
-
 	}
 
 	/**
@@ -149,14 +148,34 @@ struct Texture
 		int ceiled_level = level > MipLevels - 1 ? MipLevels - 1 : level;
 		ceiled_level = ceiled_level < 0 ? 0 : ceiled_level;
 
-		std::cout << "level: " << ceiled_level << std::endl;
+		int l = ceiled_level;
+
+		coords[0] = fmod(coords[0], 1.0f);
+		coords[1] = -fmod(coords[1], 1.0f);
+		if (coords[0] < 0.0f)
+			coords[0] += 1.0f;
+		if (coords[1] < 0.0f)
+			coords[1] += 1.0f;
+
+		float c0 = coords[0] * (float) MipResX(l);
+		float c1 = coords[1] * (float) MipResY(l);
 
 
+		// interpolate
+		int x_low = (int) c0;
+		int x_up = x_low + 1;
+		int y_low = (int) c1;
+		int y_up = y_low + 1;
 
-		int x = (int) MipResX(ceiled_level) * coords.x;
-		int y = (int) MipResY(ceiled_level) * coords.y;
+		float rel_x = c0 - x_low;
+		float rel_y = c1 - y_low;
 
-		return data[ceiled_level][y*MipResY(ceiled_level)+x];
+		Vec3 color = (data[l][y_low * MipResX(l) + x_low] * (1-rel_x) +
+				data[l][y_low * MipResX(l) + x_up] * rel_x) * (1-rel_y) +
+				(data[l][y_up * MipResX(l) + x_low] * (1-rel_x) +
+				data[l][y_up * MipResX(l) + x_up] * rel_x) * rel_y;
+
+		return color;
 	}
 
 	/**
@@ -269,11 +288,18 @@ struct Material
 	 * @param mipLevel Mipmap level to fetch a texture sample from.
 	 * @returns Color at the requested position or white (1, 1, 1) if there is non texture.
 	 */
-	Vec3 GetTextureColor(const Vec2 &coords, int mipLevel)
+	Vec3 GetTextureColor(const Vec2 &coords, float mipLevel)
 	{
 		if (!tex)
 			return Vec3(1.0f);
-		return tex->GetMipmappedColor(coords, mipLevel);
+
+		// Interpolate between the two nearest mipLevels:
+		int l_low = (int) mipLevel;
+		int l_up = l_low + 1;
+
+		float rel = mipLevel - l_low;
+
+		return tex->GetMipmappedColor(coords, l_low) * (1 - rel) + tex->GetMipmappedColor(coords, l_up) * rel;
 	}
 
 	/**
@@ -320,4 +346,3 @@ inline void Material::mirror(Vec3 &out, const Vec3 &in, const Vec3 &n)
 }
 
 #endif
-
