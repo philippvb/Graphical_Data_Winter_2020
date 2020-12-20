@@ -9,6 +9,8 @@
 #include "utils/fileio.h"
 #include "utils/MersenneTwister.h"
 
+#include "math.h"
+
 using namespace std;
 
 PerspCam *cam;
@@ -19,7 +21,7 @@ PerspCam *cam;
 
 bool finished = false;
 bool switched = true;
-int SamplingMode = 1;
+int SamplingMode = 7;
 
 SDL_Surface *screen;
 void initScreen(int ResX, int ResY)
@@ -169,6 +171,25 @@ void renderPatternBuffer(const vector<Vec2> &offsets)
 	}
 }
 
+
+
+/**
+ * Calculates the position for a rotated grid.
+ * Initial values are given relative to square center
+ */
+Vec2 calculate_rotated_scaled_shifted_position(float x, float y){
+//	Rotation around anlge is done by (x', y') = (x * cos(theta) - y * sin(theta), x * sin(theta) + y * cos(theta))
+//	Then we have to scale by sqrt(5)/2: (x', y') = sqrt(5)/2 * (x,y)
+//	and finaly we have to center it with (x', y') = (x,y) + (0.5, 0.5)
+	float theta = atan(0.5f);
+	Vec2 vec = Vec2(x * cos(theta) - y * sin(theta), x * sin(theta) + y * cos(theta));
+	vec = sqrt(5)/2 * vec;
+	vec = vec + Vec2(0.5f, 0.5f);
+	return vec;
+}
+
+
+
 /**
  * Renders an image of ResX * ResY size into buffer.
  */
@@ -188,32 +209,64 @@ void render(int sampling)
 			case 2: // Regular grid
 
 				// TODO 6.4 a) Push back 4 regular grid samples to samples.
-
+				samples.push_back(Vec2(0.25f, 0.25f));
+				samples.push_back(Vec2(0.25f, 0.75f));
+				samples.push_back(Vec2(0.75f, 0.25f));
+				samples.push_back(Vec2(0.75f, 0.75f));
 				break;
 			case 3: // Rotated grid
 
 				// TODO 6.4 b) Push back 4 rotated grid samples to samples.
-
+				samples.push_back(calculate_rotated_scaled_shifted_position(-0.25f, -0.25f));
+				samples.push_back(calculate_rotated_scaled_shifted_position(-0.25f, 0.25f));
+				samples.push_back(calculate_rotated_scaled_shifted_position(0.25f, -0.25f));
+				samples.push_back(calculate_rotated_scaled_shifted_position(0.25f, 0.25f));
 				break;
 			case 4: // Random
 
 				// TODO 6.4 c) Push back 4 random samples to samples.
-
+				samples.push_back(Vec2(mtrand->rand(), mtrand->rand()));
+				samples.push_back(Vec2(mtrand->rand(), mtrand->rand()));
+				samples.push_back(Vec2(mtrand->rand(), mtrand->rand()));
+				samples.push_back(Vec2(mtrand->rand(), mtrand->rand()));
 				break;
 			case 5: // Poisson disk
 
 				// TODO 6.4 d) Push back 4 samples which have at least 2*diskRadius distance to each other.
-
+				{
+				int i = 0;
+				while(i < 4){
+					Vec2 current = Vec2(mtrand->rand(), mtrand->rand());
+					bool isOK = true;
+					for (int j = 1; j <= i; j++){
+						if ((samples.end()[-j] - current).length() <= 2*diskRadius){
+							isOK = false;
+						}
+						break;
+					}
+					if (isOK){
+						samples.push_back(current);
+						i++;
+					}
+				}
+				}
 				break;
 			case 6: // Jittered
 
 				// TODO 6.4 e) Push back 4 samples, which are jittered up to 0.2 pixels around the regular grid sampling positions.
 
+				samples.push_back(Vec2(0.25f + mtrand->rand() * 0.2, 0.25f + mtrand->rand()));
+				samples.push_back(Vec2(0.25f + mtrand->rand() * 0.2, 0.75f + mtrand->rand()));
+				samples.push_back(Vec2(0.75f + mtrand->rand() * 0.2, 0.25f + mtrand->rand()));
+				samples.push_back(Vec2(0.75f + mtrand->rand() * 0.2, 0.75f + mtrand->rand()));
 				break;
 			case 7: // Stratified
 
 				// TODO 6.4 f) Push back 4 stratified samples.
-
+				samples.push_back(Vec2(mtrand->rand() * 0.5f, mtrand->rand() * 0.5f));
+				samples.push_back(Vec2(mtrand->rand() * 0.5f, mtrand->rand() * 0.5f) + Vec2(0.5f, 0));
+				samples.push_back(Vec2(mtrand->rand() * 0.5f, mtrand->rand() * 0.5f) + Vec2(0, 0.5f));
+				samples.push_back(Vec2(mtrand->rand() * 0.5f, mtrand->rand() * 0.5f) + Vec2(0.5f, 0.5f));
 				break;
 			}
 
