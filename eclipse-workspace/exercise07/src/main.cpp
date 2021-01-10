@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <algorithm>
+#include <math.h> //?
 
 // HINT:
 // Build with "scons openmp=1" for performance.
@@ -38,7 +39,7 @@ inline float sq(float v)
  */
 inline float gauss(const float d, const float sigma)
 {
-	return expf(-0.5f * sq(d / sigma));
+	return expf(-0.5f * sq(d / sigma))/sqrt(2*M_PI*sq(sigma)); //added normalization for right brightness
 }
 
 /**
@@ -52,7 +53,27 @@ inline float gauss(const float d, const float sigma)
 void GaussianFilter(Vec3* out, const Vec3* in, const int resX, const int resY,
 		float sigma)
 {
-	// TODO 7.1 a) Implement a gaussian filter.
+	// TODO 7.1 a) Implement a gaussian filter. [Done] except of edge cases
+	Vec3* rowGauss = new Vec3[resX * resY];
+	for(int pos =0; pos < resX * resY; pos++) {
+			Vec3 value= Vec3(0.0f);
+			int row_pos=pos%resY;
+			for(int i = -row_pos; i <= resY-row_pos; i++){
+					value += in[pos+i]*gauss(i, sigma);
+
+			}
+			rowGauss[pos]=value;
+	}
+
+	for(int pos =0; pos < resX * resY; pos++) {
+			Vec3 value= Vec3(0.0f);
+			int col_pos=(int)pos/resY;
+			for(int i = -col_pos; i <= resY-col_pos; i++){
+					value += rowGauss[pos+i*resY]*gauss(i, sigma);
+
+			}
+			out[pos]=value;
+	}
 }
 
 /**
@@ -68,6 +89,36 @@ void MedianFilter(Vec3* out, const Vec3* in, const int resX, const int resY,
 {
 	// TODO 7.1 b) Implement a median filter.
 	// You may want to utilize the MIN/MAX macros for looping over the filter area.
+
+
+
+	// as not specified otherwise, we use no padding and the image would get cropped to a resolution of (resX-WidthHeight)*(resY-WidthHeight)
+	// to retain image size, we pad those pixels black
+
+	for(int i=0; i<resX*resY;i++){
+		out[i]=Vec3(0.0f);
+	}
+
+	int bound=(int) (widthHeight/2);
+	for(int posX=bound; posX<resX-bound; posX++){
+		for(int posY=bound; posY<resY-bound; posY++){
+			std::vector<float> values_x;
+			std::vector<float> values_y;
+			std::vector<float> values_z;
+			for(int row=-bound; row <= bound; row++){
+				for(int col=-bound; col <= bound; col++){
+					values_x.push_back(in[posX+row+resY*(posY+col)].x);
+					values_y.push_back(in[posX+row+resY*(posY+col)].y);
+					values_z.push_back(in[posX+row+resY*(posY+col)].z);
+				}
+			}
+			std::sort (values_x.begin(), values_x.end());
+			std::sort (values_y.begin(), values_y.end());
+			std::sort (values_z.begin(), values_z.end());
+
+			out[posX+posY*resY]=Vec3(values_x[bound], values_y[bound], values_z[bound]);
+		}
+	}
 }
 
 /**
@@ -83,6 +134,22 @@ void BilateralFilter(Vec3* out, const Vec3* in, const int resX, const int resY,
 		const float sigmaG, const float sigmaB)
 {
 	// TODO 7.1 c) Implement a bilateral filter.
+	int bound = (int) sigmaG*3;
+	for(int posX=0; posX<resX; posX++){
+		for(int posY=0; posY<resY; posY++){
+			Vec3 value= Vec3(0.0f);
+			float normalization=0.0f;
+
+			for(int row=max(0,posX-bound); row < min(resX, posX+bound); row++){
+				for(int col=max(0,posY-bound); col < min(resY, posY+bound); col++){
+					value+=in[row+resY*col]*gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((in[row+resY*col]-in[posX+resY*posY]).length(), sigmaB);
+					normalization+=gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((in[row+resY*col]-in[posX+resY*posY]).length(), sigmaB);
+				}
+			}
+			out[posX+resY*posY]=value/normalization;
+		}
+	}
+
 }
 
 /**
