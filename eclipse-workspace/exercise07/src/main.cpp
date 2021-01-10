@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <algorithm>
-#include <math.h> //?
+#include <math.h>
 
 // HINT:
 // Build with "scons openmp=1" for performance.
@@ -39,7 +39,7 @@ inline float sq(float v)
  */
 inline float gauss(const float d, const float sigma)
 {
-	return expf(-0.5f * sq(d / sigma))/sqrt(2*M_PI*sq(sigma)); //added normalization for right brightness
+	return expf(-0.5f * sq(d / sigma));
 }
 
 /**
@@ -53,26 +53,28 @@ inline float gauss(const float d, const float sigma)
 void GaussianFilter(Vec3* out, const Vec3* in, const int resX, const int resY,
 		float sigma)
 {
-	// TODO 7.1 a) Implement a gaussian filter. [Done] except of edge cases
+	// TODO 7.1 a) Implement a gaussian filter.
 	Vec3* rowGauss = new Vec3[resX * resY];
 	for(int pos =0; pos < resX * resY; pos++) {
 			Vec3 value= Vec3(0.0f);
+			float normalization=0.0f;
 			int row_pos=pos%resY;
 			for(int i = -row_pos; i <= resY-row_pos; i++){
 					value += in[pos+i]*gauss(i, sigma);
-
+					normalization+=gauss(i, sigma);
 			}
-			rowGauss[pos]=value;
+			rowGauss[pos]=value/normalization;
 	}
 
 	for(int pos =0; pos < resX * resY; pos++) {
 			Vec3 value= Vec3(0.0f);
+			float normalization=0.0f;
 			int col_pos=(int)pos/resY;
 			for(int i = -col_pos; i <= resY-col_pos; i++){
 					value += rowGauss[pos+i*resY]*gauss(i, sigma);
-
+					normalization+=gauss(i, sigma);
 			}
-			out[pos]=value;
+			out[pos]=value/normalization;
 	}
 }
 
@@ -140,8 +142,8 @@ void BilateralFilter(Vec3* out, const Vec3* in, const int resX, const int resY,
 			Vec3 value= Vec3(0.0f);
 			float normalization=0.0f;
 
-			for(int row=max(0,posX-bound); row < min(resX, posX+bound); row++){
-				for(int col=max(0,posY-bound); col < min(resY, posY+bound); col++){
+			for(int row=MAX(0,posX-bound); row < MIN(resX, posX+bound); row++){
+				for(int col=MAX(0,posY-bound); col < MIN(resY, posY+bound); col++){
 					value+=in[row+resY*col]*gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((in[row+resY*col]-in[posX+resY*posY]).length(), sigmaB);
 					normalization+=gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((in[row+resY*col]-in[posX+resY*posY]).length(), sigmaB);
 				}
@@ -169,6 +171,35 @@ void aTrousTransformation(Vec3** out, const Vec3* in, const int resX,
 {
 	// TODO 7.2 a) Implement the A-Trous Wavelet transform.
 	// Ignore the sigmaB parameter for part a) of this exercise.
+	Vec3** c = new Vec3*[n];
+	for (int level = 0; level < n; level++)
+		c[level] = new Vec3[resX * resY];
+
+	for(int pos=0; pos<resX*resY; pos++){
+		c[0][pos]=in[pos];
+	}
+
+	for(int level=1; level<n; level++){
+		int bound =(int) sigmaG*3;
+		for(int posX=0; posX<resX; posX++){
+			for(int posY=0; posY<resY; posY++){
+				Vec3 value= Vec3(0.0f);
+				float normalization=0.0f;
+
+				for(int row=MAX(0,posX-bound); row < MIN(resX, posX+bound); row+=pow(2, level)){
+					for(int col=MAX(0,posY-bound); col < MIN(resY, posY+bound); col+=pow(2, level)){
+						value+=c[level-1][row+resY*col]*gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((c[level-1][row+resY*col]-c[level-1][posX+resY*posY]).length(), sigmaB);
+						normalization+=gauss(sqrt(sq(row-posX)+sq(col-posY)), sigmaG)*gauss((c[level-1][row+resY*col]-c[level-1][posX+resY*posY]).length(), sigmaB);
+					}
+				}
+				c[level][posX+resY*posY]=value/normalization;
+				out[level-1][posX+resY*posY]=c[level-1][posX+resY*posY]-c[level][posX+resY*posY];
+			}
+		}
+
+	}
+
+	out[n-1]=c[n-1];
 
 	// TODO 7.2 c) Include the edge-stopping function into your A-Trous Wavelet transform implementation.
 	// This part uses sigmaB similar to the bilateral filter
@@ -190,6 +221,23 @@ void inverseATrousTransformation(Vec3* out, Vec3** in, const int resX,
 		const int resY, const int n, const float* alpha)
 {
 	// TODO 7.2 b) Implement the reconstruction from wavelet layers.
+	for(int i=0; i<resX*resY; i++){
+		out[i]=Vec3(0.0f);
+	}
+	for(int level=0; level<n-1; level++){
+		for(int posX=0; posX<resX; posX++){
+			for(int posY=0; posY<resY; posY++){
+				out[posX + resY * posY]+=alpha[level]*in[level][posX + resY * posY];
+			}
+		}
+	}
+
+	for(int posX=0; posX<resX; posX++){
+		for(int posY=0; posY<resY; posY++){
+			out[posX + resY * posY]+=in[n-1][posX + resY * posY];
+		}
+	}
+
 }
 
 /**
@@ -240,7 +288,7 @@ int main(int argc, char **argv)
 	const int N = 5;
 
 	float alpha[N] =
-	{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+	{ 1.0f, 1.0f,1.0f,1.0f,1.0f};
 
 	// TODO 7.2 b) Experiment with different values for alpha.
 	// Generate exemplary images for submission.
