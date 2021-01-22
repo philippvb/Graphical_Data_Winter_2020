@@ -1,0 +1,83 @@
+\newcommand{\NUMBER}{9}
+\newcommand{\EXERCISES}{4}
+% \newcommand{\DEADLINE}{16.11.20}
+\newcommand{\COURSE}{Graphical Data}
+\newcommand{\STUDENTA}{Philipp von Bachmann, \\Mat.-Nr.: 4116220}
+\newcommand{\STUDENTB}{David Ott, \\Mat.-Nr.: 4185646}
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath, enumerate, amssymb, multirow, fancyhdr, color, graphicx, lastpage, listings, tikz, pdflscape, subfigure, float, polynom, hyperref, tabularx, forloop, geometry, listings, fancybox, tikz, forest, tabstackengine, cancel, hyperref}
+\input kvmacros
+\geometry{a4paper,left=3cm, right=3cm, top=3cm, bottom=3cm}
+\pagestyle {fancy}
+\fancyhead[C]{\COURSE}
+\fancyhead[R]{\today}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{Page \thepage /\pageref*{LastPage}}
+\def\header#1#2{
+  \begin{center}
+    {\Large Assignment #1}\\
+    %{(Due by: #2)}
+  \end{center}
+}
+
+\newcounter{punktelistectr}
+\newcounter{punkte}
+\newcommand{\punkteliste}[2]{%
+  \setcounter{punkte}{#2}%
+  \addtocounter{punkte}{-#1}%
+  \stepcounter{punkte}%<-- also punkte = m-n+1 = Anzahl Spalten[1]
+  \begin{center}%
+  \begin{tabularx}{\linewidth}[]{@{}*{\thepunkte}{>{\centering\arraybackslash} X|}@{}>{\centering\arraybackslash}X}
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        \thepunktelistectr &
+      }
+      #2 &  $\Sigma$ \\
+      \hline
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+      \forloop{punktelistectr}{#1}{\value{punktelistectr} < #2 } %
+      {%
+        &
+      } &\\
+    \end{tabularx}
+  \end{center}
+}
+\begin{document}
+
+\begin{tabularx}{\linewidth}{m{0.3 \linewidth}X}
+  \begin{minipage}{\linewidth}
+    \STUDENTA\\
+    \STUDENTB
+  \end{minipage} & \begin{minipage}{\linewidth}
+    \punkteliste{1}{\EXERCISES}
+  \end{minipage}\\
+\end{tabularx}
+\header{Nr. \NUMBER}{\DEADLINE}
+
+\section*{6.1 Duality of Multiplication and Convolution}
+
+
+\section*{6.2 Fourier Transformation}
+  \begin{align*}
+    B(k)
+    &=\int_{-\infty}^\infty b(x) e^{-2\pi i kx} dx\\
+    &=\int_{-1}^1 e^{-2\pi i kx} dx\\
+    &=\int_{-1}^1 cos(-2\pi kx) + i \cdot sin(-2\pi kx) dx\\
+    &=[\frac{1}{-2\pi k } sin(-2\pi kx) + i \cdot \frac{1}{-2 \pi k}(- cos(-2\pi kx))]_{-1}^1 \\
+    &=[\frac{1}{-2\pi k } (sin(-2\pi kx) - i \cdot cos(-2\pi kx))]_{-1}^1 \\
+    &=\frac{1}{-2\pi k} \Big( \big( sin(-2\pi k) - i \cdot cos(-2\pi k)\big) -\big( sin(2\pi k) - i \cdot cos(2\pi k) \big) \Big) \\
+    &=\frac{1}{-2\pi k} \Big( sin(-2\pi k) - i \cdot cos(-2\pi k) - sin(2\pi k) + i \cdot cos(2\pi k) \Big) \\
+    &=\frac{1}{-2\pi k} \Big( sin(-2\pi k) - sin(2\pi k)\Big) \\
+    &=\frac{1}{-2\pi k} \Big( 2 sin(\frac{-2 \pi k - 2 \pi k }{2})\Big) \\
+    &=\frac{1}{-2\pi k} \Big( 2 sin(-2\pi k)\Big) \\
+    &=\frac{sin(-2\pi k)}{-\pi k}\\
+  \end{align*}
+  
+
+\end{document}
